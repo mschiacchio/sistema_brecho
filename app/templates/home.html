@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de brechó</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: linear-gradient(to bottom, #fccca2, #faeed8);
+        }
+        .home-section{ 
+            background-color: #ffc898;
+            line-height: 1.8;
+            text-align: center;
+            border-radius: 20px;
+            width: 30%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 2px 5px 5px grey;
+        }
+        .descricao{
+            font-size: 20px;
+        }
+        .button{
+            font-size: 15px;
+            margin-bottom: 13px;
+            background-color: #ffc898;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border-radius: 20px;
+            box-shadow: 1px 2px 2px black;
+        }
+        .button:hover {
+            background-color: rgb(245, 182, 66); /* Cor do botão ao passar o mouse */
+        }
+        .titulo {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .page-transition {
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-transition">
+        {% block content %}
+    <div id="container-cadastro" class="home-section">
+        <p class="titulo">Bem vindo(a)!</p>
+        <p class="descricao">Você deseja se cadastrar ou logar?</p>
+            <section id="login">
+                <div>
+                    <button onclick="location.href='/cadastro'" class="button" type="button" value="cadastro" id="btnCadastro">CADASTRO</button>
+                     <b>|</b> 
+                    <button onclick="location.href='/login'" class="button" type="button" value="login" id="btnLogin">LOGIN</button>
+                </div>
+                <div>
+                    
+                </div>
+            </section>
+    </div>
+    {% endblock %}
+    </div>
+</body>
+</html>

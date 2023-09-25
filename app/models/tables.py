@@ -1,20 +1,24 @@
-from app import db
+from run import db
 
-class User(db.Model):
-    __tablename__ = "users"
+class Usuario(db.Model):
+    __tablename__ = "usuarios"
+
+    def get_id(self):
+        return str(self._id)
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(80), unique=True)
+    nome_brecho = db.Column(db.String(100))
+    usuario = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(80))
     email = db.Column(db.String(120), unique=True)
 
-    def __init__(self, username, password, email):
-        self.username = username
+    def __init__(self, usuario, password, email):
+        self.usuario = usuario
         self.password = password
         self.email = email
 
     def __repr__(self):
-        return "<User %r>" % self.username
+        return "<Usuario %r>" % self.usuario
     
 class Cliente(db.Model):
     __tablename__ = "clientes"
