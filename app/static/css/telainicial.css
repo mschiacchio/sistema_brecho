@@ -1,0 +1,9 @@
+body{
+    background: linear-gradient(to right, #f58c63, #FF4500);
+}
+.titulo {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}

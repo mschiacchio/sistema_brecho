@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Sistema de brechó</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/clientes.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
@@ -12,14 +12,6 @@
         <form method="POST" action="{{ url_for('logout') }}">
             <button class="button" type="submit">Sair</button>
         </form>
-    </div>
-    <div class="navbar">
-        <a href="/home"><i class="fas fa-home icone-casa"></i></a>
-        <a href="/compras">Compras</a>
-        <a href="/vendas">Vendas</a>
-        <a href="/produtos">Produtos</a>
-        <a href="/fornecedores">Fornecedores</a>
-        <a href="/clientes">Clientes</a>
     </div>
 </body>
 </html>

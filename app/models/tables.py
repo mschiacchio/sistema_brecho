@@ -1,21 +1,27 @@
-from run import db
+from app import db, login_manager
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
-class Usuario(db.Model):
+class Usuario(db.Model, UserMixin):
     __tablename__ = "usuarios"
 
     def get_id(self):
-        return str(self._id)
+        return str(self.id)
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nome_brecho = db.Column(db.String(100))
+    email = db.Column(db.String(84), unique=True)
     usuario = db.Column(db.String(80), unique=True)
-    password = db.Column(db.String(80))
-    email = db.Column(db.String(120), unique=True)
+    senha = db.Column(db.String(128))
 
-    def __init__(self, usuario, password, email):
-        self.usuario = usuario
-        self.password = password
+    def __init__(self, nome_brecho, email, usuario, senha):
+        self.nome_brecho = nome_brecho
         self.email = email
+        self.usuario = usuario
+        self.senha = generate_password_hash(senha)
+
+    def verify_password(self, pwd):
+        return check_password_hash(self.senha, pwd)
 
     def __repr__(self):
         return "<Usuario %r>" % self.usuario
@@ -26,30 +32,30 @@ class Cliente(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(80))
     apelido = db.Column(db.String(80))
-    celular = db.Column(db.Integer(11))
+    celular = db.Column(db.Integer)
 
     def __init__(self, nome, apelido, email, celular):
         self.nome = nome
         self.apelido = apelido
         self.celular = celular
 
-    def __repr_(self):
+    def __repr__(self):
         return "<Cliente %r>" % self.nome
 
 class Produto(db.Model):
     __tablename__ = "produtos"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    categoria = db.column(db.String(80))
-    sub_categoria = db.column(db.String(80))
-    descricao = db.column(db.String(120))
-    tamanho = db.column(db.String(30))
-    cor = db.column(db.String(30))
-    medidas = db.column(db.Integer)
-    marca = db.column(db.String(80))
+    categoria = db.Column(db.String(80))
+    sub_categoria = db.Column(db.String(80))
+    descricao = db.Column(db.String(120))
+    tamanho = db.Column(db.String(30))
+    cor = db.Column(db.String(30))
+    medidas = db.Column(db.Integer)
+    marca = db.Column(db.String(80))
     foto = db.Column(db.LargeBinary)
-    preco_custo = db.column(db.Integer)
-    preco_venda = db.column(db.Integer)
+    preco_custo = db.Column(db.Integer)
+    preco_venda = db.Column(db.Integer)
 
     def __init__(self, categoria, sub_categoria, descricao, tamanho, cor, medidas, marca, foto, preco_custo, preco_venda):
         self.categoria = categoria
@@ -62,21 +68,21 @@ class Produto(db.Model):
         self.preco_custo = preco_custo
         self.preco_venda = preco_venda
 
-    def __repr_(self):
+    def __repr__(self):
         return "<Produto %r>" % self.id
 
 class Fornecedor(db.Model):
     __tablename__ = "fornecedores"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    nome = db.column(db.String(80))
-    celular = db.Column(db.Integer(11))
+    nome = db.Column(db.String(80))
+    celular = db.Column(db.Integer)
 
     def __init__(self, nome, celular):
         self.nome = nome
         self.celular = celular
 
-    def __repr_(self):
+    def __repr__(self):
         return "<Fornecedor %r>" % self.id
 
 class Compra(db.Model):
@@ -86,9 +92,9 @@ class Compra(db.Model):
     id_fornecedor = db.Column(db.Integer, db.ForeignKey('fornecedores.id'))
     qtd_pecas = db.Column(db.Integer)
     lote = db.Column(db.Boolean)
-    val_total_pg = db.column(db.Integer)
+    val_total_pg = db.Column(db.Integer)
 
-    fornecedor = db.relationship('Fornecedor', foreign_keys=fornecedor_id)
+    fornecedor = db.relationship('Fornecedor', foreign_keys=id_fornecedor)
 
     def __init__(self, id_fornecedor, qtd_pecas, lote, val_total_pg):
         self.id_fornecedor = id_fornecedor
@@ -96,7 +102,7 @@ class Compra(db.Model):
         self.lote = lote
         self.val_total_pg = val_total_pg
 
-    def __repr_(self):
+    def __repr__(self):
         return "<Compra %r>" % self.id
 
 class Venda(db.Model):
@@ -105,10 +111,10 @@ class Venda(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     id_produto = db.Column(db.Integer, db.ForeignKey('produtos.id'))
     desconto = db.Column(db.Integer) 
-    forma_pagamento = db.column(db.String(50))
+    forma_pagamento = db.Column(db.String(50))
     val_total = db.Column(db.Integer) 
 
-    produto = db.relationship('Produto', foreign_keys=produto_id)
+    produto = db.relationship('Produto', foreign_keys=id_produto)
 
     def __init__(self, id_produto, desconto, forma_pagamento, val_total):
         self.id_produto = id_produto
@@ -116,5 +122,5 @@ class Venda(db.Model):
         self.forma_pagamento = forma_pagamento
         self.val_total = val_total
 
-    def __repr_(self):
+    def __repr__(self):
         return "<Venda %r>" % self.id

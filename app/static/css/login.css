@@ -80,3 +80,24 @@ body{
     left: 10px;
     cursor: pointer;
 }
+.erro {
+    background-color: #fc0202;
+    color: white;
+    padding: 2px;
+    height: 40px;
+    border-radius: 5px; 
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+}
+.sucesso {
+    background-color: #4aff02;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+}

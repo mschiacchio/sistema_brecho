@@ -1,0 +1,50 @@
+body{
+    background: linear-gradient(to right, #f58c63, #FF4500);
+}
+.usuario-logado {
+    position: absolute;
+    top: 20px;
+    right: 45px;
+    color: white;
+}
+.logout {
+    position: absolute;
+    top: 43px;
+    right: 87px;
+}
+.button{
+    font-size: 15px;
+    margin-bottom: 13px;
+    background-color: #e4dbd9;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 20px;
+    box-shadow: 1px 2px 2px black;
+}
+.button:hover {
+    background-color: #8f8e8e;
+}
+.navbar {
+    overflow: hidden;
+    background-color: #333; /* Cor de fundo da barra de botões */
+    height: 65px;
+}
+
+/* Estilos para os botões */
+.navbar a {
+    float: left;
+    display: flex;
+    align-items: center;
+    color: white; /* Cor do texto dos botões */
+    text-align: center;
+    padding: 0px 16px;
+    text-decoration: none;
+    height: 100%;
+}
+.navbar a:hover {
+    background-color: #ddd; /* Cor de fundo quando o cursor passa por cima */
+    color: black; /* Cor do texto quando o cursor passa por cima */
+}
+.icone-casa{
+    font-size: 24px; 
+}
