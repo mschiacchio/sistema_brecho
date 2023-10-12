@@ -5,6 +5,8 @@
     <title>Sistema de brechó</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/compras.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="/static/js/compras.js"></script>
+
 </head>
 <body>
     <div class="usuario-logado"><i class="fas fa-user"></i> {{ current_user.usuario }}</div>
@@ -13,5 +15,82 @@
             <button class="button" type="submit">Sair</button>
         </form>
     </div>
+    <div class="navbar">
+        <button onclick="window.history.back()" class="button button_voltar">Voltar</button>
+        <a href="/home"><i class="fas fa-home icone-casa"></i></a>
+        <a href="/vendas">Vendas</a>
+        <a href="/produtos">Produtos</a>
+        <a href="/fornecedores">Fornecedores</a>
+        <a href="/clientes">Clientes</a>
+    </div>
+    <h1 class="titulo">Compras</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            {% if category == 'error' %}
+            <div class="erro">
+                {{ messages[0][1] }}
+            </div>
+            {% elif category == 'success' %}
+            <div class="sucesso">
+                {{ messages[0][1] }}
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+    {% endwith %}
+    <div id="container-login" class="compras-section">
+        <form action="{{ url_for('compras')}}" method="POST">
+            <section id="compras">
+                <!--ID do Fornecedor-->
+                <div class="input-container">
+                    <input type="number" name="id_fornecedor" id="id_fornecedor" class="input-field" required>
+                    <label for="id_fornecedor" class="input-label">Código do fornecedor</label>
+                </div>
+                <!--Quantidade de peças-->
+                <div class="input-container">
+                    <input type="number" name="qtd_pecas" id="qtd_pecas" class="input-field" required>
+                    <label for="qtd_pecas" class="input-label">Quantidade de peças</label>
+                </div>
+                <!--Valor total pago-->
+                <div class="input-container">
+                    <input type="text" name="val_total_pg" id="val_total_pg" class="input-field formatar-reais" required>
+                    <label for="val_total_pg" class="input-label">Valor total pago</label>
+                </div>
+                <!--Lote-->
+                <div class="checkbox-group">
+                    <label for="lote">É lote?</label>
+                    <input type="radio" name="lote" id="lote"  value="SIM" required> SIM
+                    <input type="radio" name="lote" id="lote"  value="NÃO" required> NÃO
+                </div>
+                <!--Botão de cadastro-->
+                <div class="div-btn">
+                    <input type="submit" class="button" value="CADASTRAR"id="btnCadastrar"></input>
+                </div>
+            </section>
+        </form>
+    </div>
+    <table id="tabelaCompras" class="tabela display" border="2">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Fornecedor</th>
+                <th>Quantidade de Peças</th>
+                <th>Lote</th>
+                <th>Valor total pago</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for compra in compras %}
+            <tr>
+                <td>{{ compra.id }}</td>
+                <td>{{ compra.id_fornecedor }}</td>
+                <td>{{ compra.qtd_pecas }}</td>
+                <td>{{ compra.lote }}</td>
+                <td>{{ compra.val_total_pg }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>

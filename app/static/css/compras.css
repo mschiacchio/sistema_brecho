@@ -12,6 +12,11 @@ body{
     top: 43px;
     right: 87px;
 }
+.button_voltar {
+    position: absolute;
+    top: 33px;
+    left: 15px;
+}
 .button{
     font-size: 15px;
     margin-bottom: 13px;
@@ -23,4 +28,119 @@ body{
 }
 .button:hover {
     background-color: #8f8e8e;
+}
+.navbar {
+    overflow: hidden;
+    background: linear-gradient(to bottom, #cccccc, #5c5a5a); /* Cor de fundo da barra de botões */
+    height: 65px;
+}
+/* Estilos para os botões */
+.navbar a {
+    float: left;
+    display: flex;
+    align-items: center;
+    color: white; /* Cor do texto dos botões */
+    text-align: center;
+    padding: 0px 16px;
+    text-decoration: none;
+    height: 100%;
+    margin-left: 80px; /* Adicione uma margem de 10px à esquerda */
+    margin-right: -70px;
+}
+.navbar a:hover {
+    background-color: #ddd; /* Cor de fundo quando o cursor passa por cima */
+    color: black; /* Cor do texto quando o cursor passa por cima */
+}
+.icone-casa{
+    font-size: 24px; 
+}
+.titulo{
+    text-align: center;
+}
+.flash-message {
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 10px;
+}
+
+.success {
+    background-color: #4aff02;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.error {
+    background-color: #FF5733;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+
+.compras-section{ 
+    background-color:#e4dbd9;
+    line-height: 1.5;
+    text-align: center;
+    border-radius: 20px;
+    width: 30%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 2px 5px 5px grey;
+}
+.input-container {
+    position: relative;
+    margin: 20px;
+}
+.input-field {
+    width: 30%;
+    padding: 15px;
+    border: 1px solid #000000;
+    border-radius: 7px;
+    font-size: 16px;
+}
+.input-label {
+    position: absolute;
+    top: 20%;
+    left: 35%;
+    transform: translateX(-10%);
+    pointer-events: none;
+    transition: 0.2s ease-out;
+    color: #8f8e8e;
+}
+.input-field:focus + .input-label,
+.input-field:valid + .input-label {
+  top: 0;
+  font-size: 12px;
+  color: #000000;
+}
+.input-checkbox {
+    position: absolute;
+    top: 60%;
+    left: 35%;
+    align-items: center;
+    color: #000000;
+}
+.div-btn{
+    padding: 10px;
+}
+.checkbox-group {
+    text-align: center; /* Centraliza os elementos horizontalmente */
+}
+
+.checkbox-group label {
+    display: block; /* Torna o rótulo um bloco para alinhá-lo acima dos checkboxes */
+    text-align: center; /* Centraliza o rótulo */
+    margin-bottom: 10px; /* Adiciona espaço abaixo do rótulo */
+}
+.tabela {
+    border-collapse: collapse;
+    /* Combina as bordas das células */
+    width: 100%;
+    text-align: center;
+    background: linear-gradient(to bottom, #cccccc, #9b9595);;;
 }

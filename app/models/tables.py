@@ -14,6 +14,13 @@ class Usuario(db.Model, UserMixin):
     usuario = db.Column(db.String(80), unique=True)
     senha = db.Column(db.String(128))
 
+    clientes = db.relationship("Cliente", backref="usuario")
+    produtos = db.relationship("Produto", backref="usuario")
+    fornecedores = db.relationship("Fornecedor", backref="usuario")
+    compras = db.relationship("Compra", backref="usuario")
+    vendas = db.relationship("Venda", backref="usuario")
+
+
     def __init__(self, nome_brecho, email, usuario, senha):
         self.nome_brecho = nome_brecho
         self.email = email
@@ -33,6 +40,8 @@ class Cliente(db.Model):
     nome = db.Column(db.String(80))
     apelido = db.Column(db.String(80))
     celular = db.Column(db.Integer)
+    id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
+
 
     def __init__(self, nome, apelido, email, celular):
         self.nome = nome
@@ -56,6 +65,8 @@ class Produto(db.Model):
     foto = db.Column(db.LargeBinary)
     preco_custo = db.Column(db.Integer)
     preco_venda = db.Column(db.Integer)
+    id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
+
 
     def __init__(self, categoria, sub_categoria, descricao, tamanho, cor, medidas, marca, foto, preco_custo, preco_venda):
         self.categoria = categoria
@@ -77,6 +88,8 @@ class Fornecedor(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nome = db.Column(db.String(80))
     celular = db.Column(db.Integer)
+    id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
+
 
     def __init__(self, nome, celular):
         self.nome = nome
@@ -91,8 +104,9 @@ class Compra(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     id_fornecedor = db.Column(db.Integer, db.ForeignKey('fornecedores.id'))
     qtd_pecas = db.Column(db.Integer)
-    lote = db.Column(db.Boolean)
-    val_total_pg = db.Column(db.Integer)
+    lote = db.Column(db.String(3))
+    val_total_pg = db.Column(db.Float)
+    id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
 
     fornecedor = db.relationship('Fornecedor', foreign_keys=id_fornecedor)
 
@@ -113,6 +127,8 @@ class Venda(db.Model):
     desconto = db.Column(db.Integer) 
     forma_pagamento = db.Column(db.String(50))
     val_total = db.Column(db.Integer) 
+    id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
+
 
     produto = db.relationship('Produto', foreign_keys=id_produto)
 
