@@ -1,5 +1,5 @@
 body{
-    background: linear-gradient(to right, #f58c63, #FF4500);
+    background: linear-gradient(to right, #d1f8eb, #87fad4);
 }
 .usuario-logado {
     position: absolute;
@@ -31,8 +31,9 @@ body{
 }
 .navbar {
     overflow: hidden;
-    background: linear-gradient(to bottom, #cccccc, #5c5a5a); /* Cor de fundo da barra de botões */
+    background-color: #707070;
     height: 65px;
+    border-radius: 5px;
 }
 /* Estilos para os botões */
 .navbar a {
@@ -51,37 +52,60 @@ body{
     background-color: #ddd; /* Cor de fundo quando o cursor passa por cima */
     color: black; /* Cor do texto quando o cursor passa por cima */
 }
+.dataTables_filter {
+    margin-top: 10px;
+    padding: 10px;
+}
+.dataTables_filter input {
+    border: 1px solid black !important;
+}
+.dataTables tr,
+.dataTables th,
+.dataTables td {
+    border: 1.5px solid black;
+}
 .icone-casa{
     font-size: 24px; 
 }
 .titulo{
     text-align: center;
 }
+.button_adc{
+    font-size: 15px;
+    margin: 13px auto;
+    background-color: #e4dbd9;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 20px;
+    box-shadow: 1px 2px 2px black;
+    display: flex;
+    align-items: center;
+}
+.button_adc:hover {
+    background-color: #8f8e8e;
+}
 .flash-message {
     padding: 10px;
     border: 1px solid #ccc;
     margin: 10px;
 }
-
 .success {
     background-color: #4aff02;
-    color: white;
+    color: rgb(0, 0, 0);
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 10px;
+    font-weight: bold;
 }
-
 .error {
-    background-color: #FF5733;
-    color: white;
+    background-color: #fc1100;
+    color: rgb(0, 0, 0);
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 10px;
 }
-
-
 .compras-section{ 
-    background-color:#e4dbd9;
+    background-color:#d6d4d4;
     line-height: 1.5;
     text-align: center;
     border-radius: 20px;
@@ -131,7 +155,6 @@ body{
 .checkbox-group {
     text-align: center; /* Centraliza os elementos horizontalmente */
 }
-
 .checkbox-group label {
     display: block; /* Torna o rótulo um bloco para alinhá-lo acima dos checkboxes */
     text-align: center; /* Centraliza o rótulo */
@@ -142,5 +165,15 @@ body{
     /* Combina as bordas das células */
     width: 100%;
     text-align: center;
-    background: linear-gradient(to bottom, #cccccc, #9b9595);;;
+    background-color: #c7c7c7;
+    margin-top: 50px;
+    border-color: black;
+}
+th{
+    font-size: 17px;
+    background-color: #9c9a9a;
+}
+a{
+    text-decoration: none;
+    color: #000;
 }

@@ -5,7 +5,10 @@
     <title>Sistema de brechó</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/compras.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <script src="/static/js/compras.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
 
 </head>
 <body>
@@ -24,60 +27,34 @@
         <a href="/clientes">Clientes</a>
     </div>
     <h1 class="titulo">Compras</h1>
+    <button class="button_adc"><a href="comprascadastro">ADICIONAR</a></button>
     {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
             {% for category, message in messages %}
             {% if category == 'error' %}
-            <div class="erro">
+            <div class="error">
                 {{ messages[0][1] }}
             </div>
             {% elif category == 'success' %}
-            <div class="sucesso">
+            <div class="success">
                 {{ messages[0][1] }}
             </div>
             {% endif %}
             {% endfor %}
             {% endif %}
     {% endwith %}
-    <div id="container-login" class="compras-section">
-        <form action="{{ url_for('compras')}}" method="POST">
-            <section id="compras">
-                <!--ID do Fornecedor-->
-                <div class="input-container">
-                    <input type="number" name="id_fornecedor" id="id_fornecedor" class="input-field" required>
-                    <label for="id_fornecedor" class="input-label">Código do fornecedor</label>
-                </div>
-                <!--Quantidade de peças-->
-                <div class="input-container">
-                    <input type="number" name="qtd_pecas" id="qtd_pecas" class="input-field" required>
-                    <label for="qtd_pecas" class="input-label">Quantidade de peças</label>
-                </div>
-                <!--Valor total pago-->
-                <div class="input-container">
-                    <input type="text" name="val_total_pg" id="val_total_pg" class="input-field formatar-reais" required>
-                    <label for="val_total_pg" class="input-label">Valor total pago</label>
-                </div>
-                <!--Lote-->
-                <div class="checkbox-group">
-                    <label for="lote">É lote?</label>
-                    <input type="radio" name="lote" id="lote"  value="SIM" required> SIM
-                    <input type="radio" name="lote" id="lote"  value="NÃO" required> NÃO
-                </div>
-                <!--Botão de cadastro-->
-                <div class="div-btn">
-                    <input type="submit" class="button" value="CADASTRAR"id="btnCadastrar"></input>
-                </div>
-            </section>
-        </form>
-    </div>
+    
     <table id="tabelaCompras" class="tabela display" border="2">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>ID Compra</th>
                 <th>ID Fornecedor</th>
                 <th>Quantidade de Peças</th>
                 <th>Lote</th>
                 <th>Valor total pago</th>
+                <th>Data de compra</th>
+                <th>Editar</th>
+                <th>Excluir</th>
             </tr>
         </thead>
         <tbody>
@@ -87,10 +64,22 @@
                 <td>{{ compra.id_fornecedor }}</td>
                 <td>{{ compra.qtd_pecas }}</td>
                 <td>{{ compra.lote }}</td>
-                <td>{{ compra.val_total_pg }}</td>
+                <td>R${{ compra.val_total_pg }}</td>
+                <td>{{ compra.dta_compra.strftime("%d/%m/%Y") }}</td>
+                <td>
+                    <a href="/editarcompras/{{ compra.id }}">
+                    <div class="icon-container"><i class="fas fa-pencil-alt"></i></div>
+                    </a>
+                </td>
+                <td>
+                    <a href="/excluircompras/{{ compra.id }}" class="excluir-compra" data-id="{{ compra.id }}" data-confirm="Tem certeza de que deseja excluir esta compra?">
+                        <div class="icon-container"><i class="fas fa-trash"></i></div>
+                    </a> 
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    <script src="/static/js/compras.js"></script>
 </body>
 </html>

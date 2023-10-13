@@ -1,38 +1,29 @@
-function formatarCampoReais(input) {
-    var valor = input.value.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+$(document).ready(function() {
+    $('#tabelaCompras').on('click', '.excluir-compra', function(e) {
+        e.preventDefault();
+        var compraId = $(this).data('id');
+        var confirmMessage = $(this).data('confirm');
 
-    // Formatação em Reais
-    if (valor.length > 2) {
-        var parteDecimal = valor.substring(valor.length - 2);
-        var parteInteira = valor.substring(0, valor.length - 2);
-        valor = 'R$' + parteInteira.replace(/^0+/, '') + ',' + parteDecimal;
-    } else if (valor.length > 0) {
-        valor = 'R$0,' + valor;
-    } else {
-        valor = 'R$0,00';
-    }
-
-    input.value = valor;
-}
-// Função para adicionar manipuladores de eventos de formatação a todos os campos relevantes
-function adicionarManipuladoresDeEventos() {
-    var camposFormatarReais = document.querySelectorAll('.formatar-reais');
-    camposFormatarReais.forEach(input => {
-        input.addEventListener('input', function () {
-            formatarCampoReais(this);
-        });
+        if (window.confirm(confirmMessage)) {
+            window.location.href = "/excluircompras/" + compraId;
+        }
     });
-}
 
-// Chame a função para adicionar manipuladores de eventos quando o documento estiver pronto
-document.addEventListener('DOMContentLoaded', function () {
-    adicionarManipuladoresDeEventos();
-});
-
-// Adicione um evento de entrada (input) para formatar o campo em tempo real
-var camposFormatarReais = document.querySelectorAll('.formatar-reais');
-camposFormatarReais.forEach(input => {
-    input.addEventListener('input', function () {
-        formatarCampoReais(this);
+    $('#tabelaCompras').DataTable({
+        "language": {
+            "lengthMenu": "Mostrando _MENU_ registros por página",
+            "zeroRecords": "Nenhum registro encontrado",
+            "info": "Mostrando página _PAGE_ de _PAGES_",
+            "infoEmpty": "Nenhum registro disponível",
+            "oPaginate": {
+                "sNext": "Próximo",
+                "sPrevious": "Anterior",
+                "sFirst": "Primeiro",
+                "sLast": "Último"
+            },
+            "sLoadingRecords": "Carregando...",
+            "sSearch": "Pesquisar:",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)"
+        }
     });
 });

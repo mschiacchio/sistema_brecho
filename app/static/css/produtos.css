@@ -1,5 +1,5 @@
 body{
-    background: linear-gradient(to right, #f58c63, #FF4500);
+    background: linear-gradient(to right, #d1f8eb, #87fad4);
 }
 .usuario-logado {
     position: absolute;
@@ -12,6 +12,11 @@ body{
     top: 43px;
     right: 87px;
 }
+.button_voltar {
+    position: absolute;
+    top: 33px;
+    left: 15px;
+}
 .button{
     font-size: 15px;
     margin-bottom: 13px;
@@ -23,4 +28,33 @@ body{
 }
 .button:hover {
     background-color: #8f8e8e;
+}
+.navbar {
+    overflow: hidden;
+    background-color: #707070;
+    height: 65px;
+    border-radius: 5px;
+}
+/* Estilos para os botões */
+.navbar a {
+    float: left;
+    display: flex;
+    align-items: center;
+    color: white; /* Cor do texto dos botões */
+    text-align: center;
+    padding: 0px 16px;
+    text-decoration: none;
+    height: 100%;
+    margin-left: 80px; /* Adicione uma margem de 10px à esquerda */
+    margin-right: -70px;
+}
+.navbar a:hover {
+    background-color: #ddd; /* Cor de fundo quando o cursor passa por cima */
+    color: black; /* Cor do texto quando o cursor passa por cima */
+}
+.icone-casa{
+    font-size: 24px; 
+}
+.titulo{
+    text-align: center;
 }

@@ -1,5 +1,6 @@
-from flask import Flask, render_template, redirect, request, url_for, flash, session
+from flask import Flask, render_template, redirect, request, url_for, flash, session, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
+from datetime import datetime
 from . import app, db, login_manager
 from .models.tables import Usuario, Cliente, Produto, Fornecedor, Compra, Venda
 
@@ -70,11 +71,14 @@ def signup():
 @login_required
 @app.route("/compras", methods=['GET', 'POST'])
 def compras():
-    session.pop('sucesso', None)
-    session.pop('erro', None)
-
     compras = Compra.query.filter_by(id_usuario=current_user.id).all()
-    
+    return render_template('compras.html', compras=compras)
+
+@login_required
+@app.route("/comprascadastro", methods=['GET', 'POST'])
+def compras_cadastro():
+    session.pop('success', None)
+    session.pop('error', None)    
 
     if request.method == 'POST':
         id_fornecedor = request.form.get('id_fornecedor')
@@ -83,6 +87,7 @@ def compras():
         val_total_pg_str = request.form.get('val_total_pg')
         val_total_pg_str = val_total_pg_str.replace('R$', '')
         val_total_pg_str = val_total_pg_str.replace(',', '.')
+        dta_compra = datetime.strptime(request.form.get('dta_compra'), '%Y-%m-%d').date()
 
         try:
             val_total_pg = float(val_total_pg_str)
@@ -91,26 +96,74 @@ def compras():
             val_total_pg = None
 
 
-        if id_fornecedor and qtd_pecas and val_total_pg and lote:
-
-            print(id_fornecedor)
-            print(qtd_pecas)
-            print(val_total_pg)
-            print(lote)
-            compras = Compra(id_fornecedor, qtd_pecas, lote, val_total_pg)
+        if id_fornecedor and qtd_pecas and val_total_pg and lote and dta_compra:
+            compras = Compra(id_fornecedor, qtd_pecas, lote, val_total_pg, dta_compra)
             db.session.add(compras)
+            compras.id_usuario = current_user.id
             try:
                 db.session.commit()
-                print(compras)
-                print('Cadastro realizado com sucesso')
-                flash('Cadastro das compras realizado com sucesso!', 'sucesso')
+                flash('Cadastro da compra realizado com sucesso!', 'success')
             except Exception as e:
                 print(f'Erro durante o cadastro', e)
                 db.session.rollback()
-                flash('Erro ao cadastrar as compras', 'erro')
+                flash('Erro ao cadastrar as compras', 'error')
         
-    return render_template("compras.html", compras=compras)
+    return render_template("comprascadastro.html")
 
+@app.route("/excluircompras/<int:id>", methods=['GET'])
+@login_required
+def excluir_compras(id):
+    compras = Compra.query.filter_by(id=id, id_usuario=current_user.id).first()
+
+    if compras is None:
+        return jsonify({"error": "Compra não encontrada"}), 404
+
+    db.session.delete(compras)
+
+    try:
+        db.session.commit()
+        flash('Compra excluída com sucesso!', 'success')
+        return redirect(url_for("compras"))
+    except Exception as e:
+        db.session.rollback()
+        flash('Erro ao excluir compra', 'error')
+        print(f'Erro durante a exclusão da compra: {str(e)}')
+
+    return render_template('compras.html')
+
+@app.route("/editarcompras/<int:id>", methods=['GET', 'POST'])
+def editar_compras(id):
+    compras = Compra.query.filter_by(id=id, id_usuario=current_user.id).first()
+
+    if compras is None:
+        return jsonify({"error": "Compra não encontrada"}), 404
+    
+    if request.method == "POST":
+        id_fornecedor = request.form.get('id_fornecedor')
+        qtd_pecas = request.form.get('qtd_pecas')
+        lote = request.form.get('lote')
+        val_total_pg_str = request.form.get('val_total_pg')
+        val_total_pg_str = val_total_pg_str.replace('R$', '')
+        val_total_pg_str = val_total_pg_str.replace(',', '.')
+        dta_compra = datetime.strptime(request.form.get('dta_compra'), '%Y-%m-%d').date()
+
+        try:
+            val_total_pg = float(val_total_pg_str)
+        except ValueError:
+            val_total_pg = None
+
+        if id_fornecedor and qtd_pecas and val_total_pg and lote and dta_compra:
+            compras.id_fornecedor = id_fornecedor
+            compras.qtd_pecas = qtd_pecas
+            compras.val_total_pg = val_total_pg
+            compras.lote = lote
+            compras.dta_compra = dta_compra
+
+            db.session.commit()
+            return redirect(url_for("compras"))
+        
+    return render_template("editarcompras.html", compras=compras) 
+   
 @login_required
 @app.route("/vendas", methods=['GET', 'POST'])
 def vendas():

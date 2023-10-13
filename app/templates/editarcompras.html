@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de brechó</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/compras.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="usuario-logado"><i class="fas fa-user"></i> {{ current_user.usuario }}</div>
+    <div class="logout">
+        <form method="POST" action="{{ url_for('logout') }}">
+            <button class="button" type="submit">Sair</button>
+        </form>
+    </div>
+    <div class="navbar">
+        <button onclick="window.history.back()" class="button button_voltar">Voltar</button>
+        <a href="/home"><i class="fas fa-home icone-casa"></i></a>
+        <a href="/vendas">Vendas</a>
+        <a href="/produtos">Produtos</a>
+        <a href="/fornecedores">Fornecedores</a>
+        <a href="/clientes">Clientes</a>
+    </div>
+    <h1 class="titulo">Editar</h1>
+    <button onclick="location.href='/compras'" class="button_adc">Cancelar edição</button>
+    <div id="container-login" class="compras-section">
+        <form method="POST" action="{{ url_for('editar_compras', id=compras.id) }}">
+            <section id="compras">
+                <!--ID do Fornecedor-->
+                <div class="input-container">
+                    <input type="number" name="id_fornecedor" value="{{ compras.id_fornecedor }}" class="input-field" required>
+                    <label for="id_fornecedor" class="input-label">Código do fornecedor</label>
+                </div>
+                <!--Quantidade de peças-->
+                <div class="input-container">
+                    <input type="number" name="qtd_pecas" value="{{ compras.qtd_pecas }}" class="input-field" required>
+                    <label for="qtd_pecas" class="input-label">Quantidade de peças</label>
+                </div>
+                <!--Valor total pago-->
+                <div class="input-container">
+                    <input type="text" name="val_total_pg" value="R${{ compras.val_total_pg }}" class="input-field formatar-reais" required>
+                    <label for="val_total_pg" class="input-label">Valor total pago</label>
+                </div>
+                <!--Data de compra-->
+                <div class="input-container">
+                    <input type="date" name="dta_compra" value="{{ compras.dta_compra }}" class="input-field" required>
+                    <label for="dta_compra" class="input-label"></label>
+                </div>
+                <!--Lote-->
+                <div class="checkbox-group">
+                    <label for="lote">É lote?</label>
+                    <input type="radio" name="lote" value="SIM" {% if compras.lote == "SIM" %}checked{% endif %} required> SIM
+                    <input type="radio" name="lote" value="NÃO" {% if compras.lote == "NÃO" %}checked{% endif %} required> NÃO
+                </div>
+            
+                <!--Botão de editar-->
+                <div class="div-btn">
+                    <input type="submit" class="button" value="EDITAR"id="btnCadastrar"></input>
+                </div>
+            </section>
+        </form>
+    </div>
+    <script src="/static/js/comprascadastro.js"></script>
+</body>
+</html>

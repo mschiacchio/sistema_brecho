@@ -106,15 +106,17 @@ class Compra(db.Model):
     qtd_pecas = db.Column(db.Integer)
     lote = db.Column(db.String(3))
     val_total_pg = db.Column(db.Float)
+    dta_compra = db.Column(db.Date)
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
 
     fornecedor = db.relationship('Fornecedor', foreign_keys=id_fornecedor)
 
-    def __init__(self, id_fornecedor, qtd_pecas, lote, val_total_pg):
+    def __init__(self, id_fornecedor, qtd_pecas, lote, val_total_pg, dta_compra):
         self.id_fornecedor = id_fornecedor
         self.qtd_pecas = qtd_pecas
         self.lote = lote
         self.val_total_pg = val_total_pg
+        self.dta_compra = dta_compra
 
     def __repr__(self):
         return "<Compra %r>" % self.id
