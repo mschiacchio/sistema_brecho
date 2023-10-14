@@ -23,6 +23,21 @@
     </div>
     <h1 class="titulo">Editar</h1>
     <button onclick="location.href='/compras'" class="button_adc">Cancelar edição</button>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            {% if category == 'error' %}
+            <div class="error">
+                {{ messages[0][1] }}
+            </div>
+            {% elif category == 'success' %}
+            <div class="success">
+                {{ messages[0][1] }}
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+    {% endwith %}
     <div id="container-login" class="compras-section">
         <form method="POST" action="{{ url_for('editar_compras', id=compras.id) }}">
             <section id="compras">

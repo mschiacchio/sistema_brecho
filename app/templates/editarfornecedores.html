@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de brechó</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/fornecedores.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="usuario-logado"><i class="fas fa-user"></i> {{ current_user.usuario }}</div>
+    <div class="logout">
+        <form method="POST" action="{{ url_for('logout') }}">
+            <button class="button" type="submit">Sair</button>
+        </form>
+    </div>
+    <div class="navbar">
+        <button onclick="window.history.back()" class="button button_voltar">Voltar</button>
+        <a href="/home"><i class="fas fa-home icone-casa"></i></a>
+        <a href="/compras">Compras</a>
+        <a href="/Vendas">Vendas</a>
+        <a href="/Produtos">Produtos</a>
+        <a href="/clientes">Clientes</a>
+    </div>
+    <h1 class="titulo">Editar</h1>
+    <button onclick="location.href='/fornecedores'" class="button_adc">Cancelar edição</button>
+    <div id="container-login" class="fornecedores-section">
+        <form method="POST" action="{{ url_for('editar_fornecedores', id=fornecedores.id) }}">
+            <section id="fornecedores">
+                <!--Nome-->
+                <div class="input-container">
+                    <input type="text" name="nome" value="{{ fornecedores.nome }}" class="input-field" required>
+                    <label for="nome" class="input-label">Nome</label>
+                </div>
+                <!--Celular-->
+                <div class="input-container">
+                    <input type="number" name="celular" value="{{ fornecedores.celular }}" class="input-field">
+                    <label for="celular" class="input-label">Celular</label>
+                </div>
+                <!--Botão de editar-->
+                <div class="div-btn">
+                    <input type="submit" class="button" value="EDITAR"id="btnCadastrar"></input>
+                </div>
+            </section>
+        </form>
+    </div>
+    <script src="/static/js/fornecedores.js"></script>
+</body>
+</html>

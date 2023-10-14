@@ -74,6 +74,10 @@ def compras():
     compras = Compra.query.filter_by(id_usuario=current_user.id).all()
     return render_template('compras.html', compras=compras)
 
+def fornecedor_existe(id_fornecedor):
+    fornecedor = Fornecedor.query.get(id_fornecedor)
+    return fornecedor is not None
+
 @login_required
 @app.route("/comprascadastro", methods=['GET', 'POST'])
 def compras_cadastro():
@@ -97,17 +101,20 @@ def compras_cadastro():
 
 
         if id_fornecedor and qtd_pecas and val_total_pg and lote and dta_compra:
-            compras = Compra(id_fornecedor, qtd_pecas, lote, val_total_pg, dta_compra)
-            db.session.add(compras)
-            compras.id_usuario = current_user.id
-            try:
-                db.session.commit()
-                flash('Cadastro da compra realizado com sucesso!', 'success')
-            except Exception as e:
-                print(f'Erro durante o cadastro', e)
-                db.session.rollback()
-                flash('Erro ao cadastrar as compras', 'error')
-        
+            if fornecedor_existe(id_fornecedor):
+                compras = Compra(id_fornecedor, qtd_pecas, lote, val_total_pg, dta_compra)
+                db.session.add(compras)
+                compras.id_usuario = current_user.id
+                try:
+                    db.session.commit()
+                    flash('Cadastro da compra realizado com sucesso!', 'success')
+                except Exception as e:
+                    print(f'Erro durante o cadastro', e)
+                    db.session.rollback()
+                    flash('Erro ao cadastrar as compras', 'error')
+            else:
+                flash('ID do fornecedor não existe. Cadastre o fornecedor primeiro.', 'error')
+
     return render_template("comprascadastro.html")
 
 @app.route("/excluircompras/<int:id>", methods=['GET'])
@@ -153,17 +160,103 @@ def editar_compras(id):
             val_total_pg = None
 
         if id_fornecedor and qtd_pecas and val_total_pg and lote and dta_compra:
-            compras.id_fornecedor = id_fornecedor
-            compras.qtd_pecas = qtd_pecas
-            compras.val_total_pg = val_total_pg
-            compras.lote = lote
-            compras.dta_compra = dta_compra
-
-            db.session.commit()
-            return redirect(url_for("compras"))
+            if fornecedor_existe(id_fornecedor):
+                compras.id_fornecedor = id_fornecedor
+                compras.qtd_pecas = qtd_pecas
+                compras.val_total_pg = val_total_pg
+                compras.lote = lote
+                compras.dta_compra = dta_compra
+                try:
+                    db.session.commit()
+                    flash('Compra editada com sucesso!', 'success')
+                    return redirect(url_for('compras'))
+                except Exception as e:
+                    print(f'Erro durante a edição', e)
+                    db.session.rollback()
+                    flash('Erro ao editar a compra', 'error')
+            else:
+                flash('ID do fornecedor não existe. Cadastre o fornecedor primeiro.', 'error')
         
     return render_template("editarcompras.html", compras=compras) 
-   
+
+@login_required
+@app.route("/fornecedores", methods=['GET', 'POST'])
+def fornecedores():
+    fornecedores = Fornecedor.query.filter_by(id_usuario=current_user.id).all()
+    return render_template("fornecedores.html", fornecedores=fornecedores)
+
+@login_required
+@app.route("/fornecedorescadastro", methods=['GET', 'POST'])
+def fornecedores_cadastro():
+    session.pop('success', None)
+    session.pop('error', None)    
+
+    if request.method == 'POST':
+        nome = request.form.get('nome')
+        celular = request.form.get('celular')
+
+        if not celular:
+            celular = ""
+
+        if nome:
+            fornecedores = Fornecedor(nome, celular)
+            db.session.add(fornecedores)
+            fornecedores.id_usuario = current_user.id
+            try:
+                db.session.commit()
+                flash('Cadastro do fornecedor realizado com sucesso!', 'success')
+            except Exception as e:
+                print(f'Erro durante o cadastro', e)
+                db.session.rollback()
+                flash('Erro ao cadastrar o fornecedor', 'error')
+        
+    return render_template("fornecedorescadastro.html")
+
+@app.route("/excluirfornecedores/<int:id>", methods=['GET'])
+@login_required
+def excluir_fornecedores(id):
+    fornecedores = Fornecedor.query.filter_by(id=id, id_usuario=current_user.id).first()
+
+    if fornecedores is None:
+        return jsonify({"error": "Fornecedor não encontrado"}), 404
+
+    db.session.delete(fornecedores)
+
+    try:
+        db.session.commit()
+        flash('Fornecedor excluído com sucesso!', 'success')
+        return redirect(url_for("fornecedores"))
+    except Exception as e:
+        db.session.rollback()
+        flash('Erro ao excluir fornecedor', 'error')
+        print(f'Erro durante a exclusão do fornecedor: {str(e)}')
+
+    return render_template('fornecedores.html')
+
+@app.route("/editarfornecedores/<int:id>", methods=['GET', 'POST'])
+def editar_fornecedores(id):
+    fornecedores = Fornecedor.query.filter_by(id=id, id_usuario=current_user.id).first()
+
+    if fornecedores is None:
+        return jsonify({"error": "Fornecedor não encontrado"}), 404
+    
+    if request.method == "POST":
+        nome = request.form.get('nome')
+        celular = request.form.get('celular')
+        
+        if not celular:
+            celular = ""
+
+        if nome:
+            fornecedores.nome = nome
+            fornecedores.celular = celular
+
+            db.session.commit()
+            flash('Fornecedor editado com sucesso!', 'success')
+            return redirect(url_for("fornecedores"))
+        
+    return render_template("editarfornecedores.html", fornecedores=fornecedores)
+
 @login_required
 @app.route("/vendas", methods=['GET', 'POST'])
 def vendas():
@@ -173,11 +266,6 @@ def vendas():
 @app.route("/produtos", methods=['GET', 'POST'])
 def produtos():
     return render_template("produtos.html")
-
-@login_required
-@app.route("/fornecedores", methods=['GET', 'POST'])
-def fornecedores():
-    return render_template("fornecedores.html")
 
 @login_required
 @app.route("/clientes", methods=['GET', 'POST'])
