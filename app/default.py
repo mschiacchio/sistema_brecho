@@ -116,9 +116,8 @@ def compras_cadastro():
                 flash('ID do fornecedor não existe. Cadastre o fornecedor primeiro.', 'error')
 
     return render_template("comprascadastro.html")
-
-@app.route("/excluircompras/<int:id>", methods=['GET'])
 @login_required
+@app.route("/excluircompras/<int:id>", methods=['GET'])
 def excluir_compras(id):
     compras = Compra.query.filter_by(id=id, id_usuario=current_user.id).first()
 
@@ -138,6 +137,7 @@ def excluir_compras(id):
 
     return render_template('compras.html')
 
+@login_required
 @app.route("/editarcompras/<int:id>", methods=['GET', 'POST'])
 def editar_compras(id):
     compras = Compra.query.filter_by(id=id, id_usuario=current_user.id).first()
@@ -212,8 +212,8 @@ def fornecedores_cadastro():
         
     return render_template("fornecedorescadastro.html")
 
-@app.route("/excluirfornecedores/<int:id>", methods=['GET'])
 @login_required
+@app.route("/excluirfornecedores/<int:id>", methods=['GET'])
 def excluir_fornecedores(id):
     fornecedores = Fornecedor.query.filter_by(id=id, id_usuario=current_user.id).first()
 
@@ -233,6 +233,7 @@ def excluir_fornecedores(id):
 
     return render_template('fornecedores.html')
 
+@login_required
 @app.route("/editarfornecedores/<int:id>", methods=['GET', 'POST'])
 def editar_fornecedores(id):
     fornecedores = Fornecedor.query.filter_by(id=id, id_usuario=current_user.id).first()
@@ -270,4 +271,83 @@ def produtos():
 @login_required
 @app.route("/clientes", methods=['GET', 'POST'])
 def clientes():
-    return render_template("clientes.html")
+    clientes = Cliente.query.filter_by(id_usuario=current_user.id).all()
+    return render_template('clientes.html', clientes=clientes)
+
+@login_required
+@app.route("/clientescadastro", methods=['GET', 'POST'])
+def clientes_cadastro():
+    session.pop('success', None)
+    session.pop('error', None)    
+
+    if request.method == 'POST':
+        nome = request.form.get('nome')
+        apelido = request.form.get('apelido')
+        celular = request.form.get('celular')
+
+        if not apelido and celular:
+            apelido = ""
+            celular = ""
+
+        if nome:
+            clientes = Cliente(nome, apelido, celular)
+            db.session.add(clientes)
+            clientes.id_usuario = current_user.id
+            try:
+                db.session.commit()
+                flash('Cadastro do cliente realizado com sucesso!', 'success')
+            except Exception as e:
+                print(f'Erro durante o cadastro', e)
+                db.session.rollback()
+                flash('Erro ao cadastrar o cliente', 'error')
+
+    return render_template("clientescadastro.html")
+
+@login_required
+@app.route("/editarclientes/<int:id>", methods=['GET', 'POST'])
+def editar_clientes(id):
+    clientes = Cliente.query.filter_by(id=id, id_usuario=current_user.id).first()
+
+    if clientes is None:
+        return jsonify({"error": "Cliente não encontrado"}), 404
+    
+    if request.method == "POST":
+        nome = request.form.get('nome')
+        apelido = request.form.get('apelido')
+        celular = request.form.get('celular')
+        
+        if not apelido and celular:
+            apelido = ""
+            celular = ""
+
+        if nome:
+            clientes.nome = nome
+            clientes.apelido = apelido
+            clientes.celular = celular
+
+            db.session.commit()
+            flash('Cliente editado com sucesso!', 'success')
+            return redirect(url_for("clientes"))
+        
+    return render_template("editarclientes.html", clientes=clientes)
+
+@login_required
+@app.route("/excluirclientes/<int:id>", methods=['GET'])
+def excluir_clientes(id):
+    clientes = Cliente.query.filter_by(id=id, id_usuario=current_user.id).first()
+
+    if clientes is None:
+        return jsonify({"error": "Cliente não encontrado"}), 404
+
+    db.session.delete(clientes)
+
+    try:
+        db.session.commit()
+        flash('Cliente excluído com sucesso!', 'success')
+        return redirect(url_for("clientes"))
+    except Exception as e:
+        db.session.rollback()
+        flash('Erro ao excluir cliente', 'error')
+        print(f'Erro durante a exclusão do cliente: {str(e)}')
+
+    return render_template('clientes.html')

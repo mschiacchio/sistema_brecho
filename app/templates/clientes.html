@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Sistema de brechó</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendas.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/clientes.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
     <div class="usuario-logado"><i class="fas fa-user"></i> {{ current_user.usuario }}</div>
@@ -22,5 +25,54 @@
         <a href="/fornecedores">Fornecedores</a>
     </div>
     <h1 class="titulo">Clientes</h1>
+    <button class="button_adc"><a href="clientescadastro">ADICIONAR</a></button>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            {% if category == 'error' %}
+            <div class="error">
+                {{ messages[0][1] }}
+            </div>
+            {% elif category == 'success' %}
+            <div class="success">
+                {{ messages[0][1] }}
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+    {% endwith %}
+    <table id="tabelaClientes" class="tabela display" border="2">
+        <thead>
+            <tr>
+                <th>ID Cliente</th>
+                <th>Nome</th>
+                <th>Apelido</th>
+                <th>Celular</th>
+                <th>Editar</th>
+                <th>Excluir</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+            <tr>
+                <td>{{ cliente.id }}</td>
+                <td>{{ cliente.nome }}</td>
+                <td>{{ cliente.apelido }}</td>
+                <td>{{ cliente.celular }}</td>
+                <td>
+                    <a href="/editarclientes/{{ cliente.id }}">
+                    <div class="icon-container"><i class="fas fa-pencil-alt"></i></div>
+                    </a>
+                </td>
+                <td>
+                    <a href="/excluirclientes/{{ cliente.id }}" class="excluir-cliente" data-id="{{ cliente.id }}" data-confirm="Tem certeza de que deseja excluir este cliente?">
+                        <div class="icon-container"><i class="fas fa-trash"></i></div>
+                    </a> 
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <script src="/static/js/clientes.js"></script>
 </body>
 </html>

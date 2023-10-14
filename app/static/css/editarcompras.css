@@ -112,3 +112,10 @@ body{
     border-radius: 5px;
     margin-bottom: 10px;
 }
+.required-asterisk {
+    color: red;
+    margin-left: 5px;
+    font-weight: bold;
+    position: absolute;
+    top: 30%;
+}

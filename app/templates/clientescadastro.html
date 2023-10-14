@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Sistema de brechó</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/fornecedores.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/clientes.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <script src="/app/static/js/fornecedores.js"></script>
-
 </head>
 <body>
     <div class="usuario-logado"><i class="fas fa-user"></i> {{ current_user.usuario }}</div>
@@ -18,13 +16,13 @@
     <div class="navbar">
         <button onclick="window.history.back()" class="button button_voltar">Voltar</button>
         <a href="/home"><i class="fas fa-home icone-casa"></i></a>
-        <a href="/vendas">Compras</a>
-        <a href="/produtos">Vendas</a>
-        <a href="/fornecedores">Produtos</a>
-        <a href="/clientes">Clientes</a>
+        <a href="/compras">Compras</a>
+        <a href="/vendas">Vendas</a>
+        <a href="/produtos">Produtos</a>
+        <a href="/fornecedores">Fornecedores</a>
     </div>
-    <h1 class="titulo">Cadastrar fornecedores</h1>
-    <button class="button_adc"><a href="fornecedores">Ver meus fornecedores</a></button>
+    <h1 class="titulo">Cadastrar clientes</h1>
+    <button class="button_adc"><a href="clientes">Ver meus clientes</a></button>
     {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
             {% for category, message in messages %}
@@ -40,18 +38,23 @@
             {% endfor %}
             {% endif %}
     {% endwith %}
-    <div id="container-login" class="fornecedores-section">
-        <form action="{{ url_for('fornecedores_cadastro')}}" method="POST">
-            <section id="fornecedores">
+    <div id="container-login" class="clientes-section">
+        <form action="{{ url_for('clientes_cadastro')}}" method="POST">
+            <section id="clientes">
                 <!--Nome-->
                 <div class="input-container">
                     <input type="text" name="nome" id="nome" class="input-field" required>
                     <label for="nome" class="input-label">Nome</label>
                     <span class="required-asterisk">*</span>
                 </div>
+                <!--Apelido-->
+                <div class="input-container">
+                    <input type="text" name="apelido" id="apelido" class="input-field">
+                    <label for="apelido" class="input-label">Apelido</label>
+                </div>
                 <!--Celular-->
                 <div class="input-container">
-                    <input type="number" name="celular" id="celular" class="input-field" value="">
+                    <input type="number" name="celular" id="celular" class="input-field">
                     <label for="celular" class="input-label">Celular</label>
                 </div>
                 <!--Botão de cadastro-->

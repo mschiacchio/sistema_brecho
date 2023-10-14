@@ -58,3 +58,10 @@ body{
 .titulo{
     text-align: center;
 }
+.required-asterisk {
+    color: red;
+    margin-left: 5px;
+    font-weight: bold;
+    position: absolute;
+    top: 30%;
+}

@@ -36,14 +36,14 @@ class Usuario(db.Model, UserMixin):
 class Cliente(db.Model):
     __tablename__ = "clientes"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nome = db.Column(db.String(80))
     apelido = db.Column(db.String(80))
     celular = db.Column(db.Integer)
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
 
 
-    def __init__(self, nome, apelido, email, celular):
+    def __init__(self, nome, apelido, celular):
         self.nome = nome
         self.apelido = apelido
         self.celular = celular

@@ -116,7 +116,7 @@ body{
     margin: 20px;
 }
 .input-field {
-    width: 30%;
+    width: 50%;
     padding: 15px;
     border: 1px solid #000000;
     border-radius: 7px;
@@ -125,7 +125,7 @@ body{
 .input-label {
     position: absolute;
     top: 20%;
-    left: 35%;
+    left: 25%;
     transform: translateX(-10%);
     pointer-events: none;
     transition: 0.2s ease-out;
@@ -156,4 +156,11 @@ th{
 a{
     text-decoration: none;
     color: #000;
+}
+.required-asterisk {
+    color: red;
+    margin-left: 5px;
+    font-weight: bold;
+    position: absolute;
+    top: 30%;
 }

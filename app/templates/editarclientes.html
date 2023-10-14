@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Sistema de brechó</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/fornecedores.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/clientes.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
@@ -17,24 +17,29 @@
         <button onclick="window.history.back()" class="button button_voltar">Voltar</button>
         <a href="/home"><i class="fas fa-home icone-casa"></i></a>
         <a href="/compras">Compras</a>
-        <a href="/Vendas">Vendas</a>
-        <a href="/Produtos">Produtos</a>
-        <a href="/clientes">Clientes</a>
+        <a href="/vendas">Vendas</a>
+        <a href="/produtos">Produtos</a>
+        <a href="/fornecedores">Fornecedores</a>
     </div>
     <h1 class="titulo">Editar</h1>
-    <button onclick="location.href='/fornecedores'" class="button_adc">Cancelar edição</button>
-    <div id="container-login" class="fornecedores-section">
-        <form method="POST" action="{{ url_for('editar_fornecedores', id=fornecedores.id) }}">
-            <section id="fornecedores">
+    <button onclick="location.href='/clientes'" class="button_adc">Cancelar edição</button>
+    <div id="container-login" class="clientes-section">
+        <form method="POST" action="{{ url_for('editar_clientes', id=clientes.id) }}">
+            <section id="clientes">
                 <!--Nome-->
                 <div class="input-container">
-                    <input type="text" name="nome" value="{{ fornecedores.nome }}" class="input-field" required>
+                    <input type="text" name="nome" value="{{ clientes.nome }}" class="input-field" required>
                     <label for="nome" class="input-label">Nome</label>
                     <span class="required-asterisk">*</span>
                 </div>
+                <!--Apelido-->
+                <div class="input-container">
+                    <input type="text" name="apelido" value="{{ clientes.apelido }}" class="input-field" id="apelido">
+                    <label for="apelido" class="input-label">Apelido</label>
+                </div>
                 <!--Celular-->
                 <div class="input-container">
-                    <input type="number" name="celular" value="{{ fornecedores.celular }}" class="input-field">
+                    <input type="number" name="celular" value="{{ clientes.celular }}" class="input-field" id="celular">
                     <label for="celular" class="input-label">Celular</label>
                 </div>
                 <!--Botão de editar-->
@@ -44,6 +49,6 @@
             </section>
         </form>
     </div>
-    <script src="/static/js/fornecedores.js"></script>
+    <script src="/static/js/clientes.js"></script>
 </body>
 </html>

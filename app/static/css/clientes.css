@@ -52,9 +52,115 @@ body{
     background-color: #ddd; /* Cor de fundo quando o cursor passa por cima */
     color: black; /* Cor do texto quando o cursor passa por cima */
 }
+.dataTables_filter {
+    margin-top: 10px;
+    padding: 10px;
+}
+.dataTables_filter input {
+    border: 1px solid black !important;
+}
+.dataTables tr,
+.dataTables th,
+.dataTables td {
+    border: 1.5px solid black;
+}
 .icone-casa{
     font-size: 24px; 
 }
 .titulo{
     text-align: center;
+}
+.button_adc{
+    font-size: 15px;
+    margin: 13px auto;
+    background-color: #e4dbd9;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 20px;
+    box-shadow: 1px 2px 2px black;
+    display: flex;
+    align-items: center;
+}
+.button_adc:hover {
+    background-color: #8f8e8e;
+}
+.success {
+    background-color: #4aff02;
+    color: rgb(0, 0, 0);
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+.error {
+    background-color: #fc1100;
+    color: rgb(0, 0, 0);
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+.clientes-section{ 
+    background-color:#d6d4d4;
+    line-height: 1.5;
+    text-align: center;
+    border-radius: 20px;
+    width: 30%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 2px 5px 5px grey;
+}
+.input-container {
+    position: relative;
+    margin: 20px;
+}
+.input-field {
+    width: 50%;
+    padding: 15px;
+    border: 1px solid #000000;
+    border-radius: 7px;
+    font-size: 16px;
+}
+.input-label {
+    position: absolute;
+    top: 20%;
+    left: 25%;
+    transform: translateX(-10%);
+    pointer-events: none;
+    transition: 0.2s ease-out;
+    color: #8f8e8e;
+}
+.input-field:focus + .input-label,
+.input-field:valid + .input-label {
+  top: 0;
+  font-size: 12px;
+  color: #000000;
+}
+.div-btn{
+    padding: 10px;
+}
+.tabela {
+    border-collapse: collapse;
+    /* Combina as bordas das células */
+    width: 100%;
+    text-align: center;
+    background-color: #c7c7c7;
+    margin-top: 50px;
+    border-color: black;
+}
+th{
+    font-size: 17px;
+    background-color: #9c9a9a;
+}
+a{
+    text-decoration: none;
+    color: #000;
+}
+.required-asterisk {
+    color: red;
+    margin-left: 5px;
+    font-weight: bold;
+    position: absolute;
+    top: 30%;
 }
