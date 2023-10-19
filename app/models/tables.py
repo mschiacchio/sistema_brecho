@@ -128,17 +128,20 @@ class Venda(db.Model):
     id_produto = db.Column(db.Integer, db.ForeignKey('produtos.id'))
     desconto = db.Column(db.Integer) 
     forma_pagamento = db.Column(db.String(50))
-    val_total = db.Column(db.Integer) 
+    val_total = db.Column(db.Float)
+    tipo_venda = db.Column(db.String(10))
+    dta_venda = db.Column(db.Date) 
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
-
 
     produto = db.relationship('Produto', foreign_keys=id_produto)
 
-    def __init__(self, id_produto, desconto, forma_pagamento, val_total):
+    def __init__(self, id_produto, desconto, forma_pagamento, val_total, tipo_venda, dta_venda):
         self.id_produto = id_produto
         self.desconto = desconto
         self.forma_pagamento = forma_pagamento
         self.val_total = val_total
+        self.tipo_venda = tipo_venda
+        self.dta_venda = dta_venda
 
     def __repr__(self):
         return "<Venda %r>" % self.id

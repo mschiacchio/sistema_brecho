@@ -263,6 +263,51 @@ def editar_fornecedores(id):
 def vendas():
     return render_template("vendas.html")
 
+def produto_existe(id_produto):
+    produto = Produto.query.get(id_produto)
+    return produto is not None
+
+@login_required
+@app.route("/vendascadastro", methods=['GET', 'POST'])
+def vendas_cadastro():
+    session.pop('success', None)
+    session.pop('error', None)    
+
+    if request.method == 'POST':
+        id_produto = request.form.get('id_produto')
+        desconto = request.form.get('desconto')
+        val_total_str = request.form.get('val_total')
+        val_total_str = val_total_str.replace('R$', '')
+        val_total_str = val_total_str.replace(',', '.')
+        forma_pagamento = request.form.get('forma_pagamento')
+        tipo_venda = request.form.get('tipo_venda')
+        dta_venda = datetime.strptime(request.form.get('dta_venda'), '%Y-%m-%d').date()
+
+        try:
+            val_total = float(val_total_str)
+        except ValueError:
+            val_total = None
+
+        if not desconto:
+            desconto = ""
+
+        if id_produto and val_total and forma_pagamento and tipo_venda and dta_venda:
+            if produto_existe(id_produto):
+                vendas = Venda(id_produto, desconto, val_total, forma_pagamento, tipo_venda, dta_venda)
+                db.session.add(vendas)
+                vendas.id_usuario = current_user.id
+                try:
+                    db.session.commit()
+                    flash('Cadastro da venda realizado com sucesso!', 'success')
+                except Exception as e:
+                    print(f'Erro durante o cadastro', e)
+                    db.session.rollback()
+                    flash('Erro ao cadastrar as compras', 'error')
+            else:
+                flash('ID do produto não existe. Cadastre o produto primeiro.', 'error')
+
+    return render_template("vendascadastro.html")
+
 @login_required
 @app.route("/produtos", methods=['GET', 'POST'])
 def produtos():

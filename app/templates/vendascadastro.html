@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de brechó</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendas.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="/app/static/js/vendascadastro.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div class="usuario-logado"><i class="fas fa-user"></i> {{ current_user.usuario }}</div>
+    <div class="logout">
+        <form method="POST" action="{{ url_for('logout') }}">
+            <button class="button" type="submit">Sair</button>
+        </form>
+    </div>
+    <div class="navbar">
+        <button onclick="window.history.back()" class="button button_voltar">Voltar</button>
+        <a href="/home"><i class="fas fa-home icone-casa"></i></a>
+        <a href="/compras">Compras</a>
+        <a href="/produtos">Produtos</a>
+        <a href="/fornecedores">Fornecedores</a>
+        <a href="/clientes">Clientes</a>
+    </div>
+    <h1 class="titulo">Cadastrar vendas</h1>
+    <button class="button_adc"><a href="vendas">Ver minhas vendas</a></button>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            {% if category == 'error' %}
+            <div class="error">
+                {{ messages[0][1] }}
+            </div>
+            {% elif category == 'success' %}
+            <div class="success">
+                {{ messages[0][1] }}
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+    {% endwith %}
+    <div id="container-login" class="vendas-section">
+        <form action="{{ url_for('vendas_cadastro')}}" method="POST">
+            <section id="vendas">
+                <div id="produtos-container">
+                    <div class="campo-produto">
+                        <!--ID do Produto-->
+                        <div class="input-container">
+                            <input type="number" name="id_produto" id="id_produto" class="input-field" required>
+                            <label for="id_produto" class="input-label">ID Produto</label>
+                            <span class="required-asterisk">*</span>
+                        </div>
+                        <button class="remove-produto" onclick="removerProduto(this)">Remover Produto</button>
+                    </div>
+                </div>
+                <button type="button" onclick="adicionarProduto()">Adicionar Produto</button>
+                <!--Desconto-->
+                <div class="input-container">
+                    <input type="number" name="desconto" id="desconto" class="input-field">
+                    <label for="desconto" class="input-label">Desconto em %</label>
+                </div>
+                <!--Valor total pago-->
+                <div class="input-container">
+                    <input type="text" name="val_total" id="val_total" class="input-field formatar-reais" required>
+                    <label for="val_total" class="input-label">Valor total da compra</label>
+                    <span class="required-asterisk">*</span>
+                </div>
+                <!--Forma de pagamento-->
+                <div class="input-container">
+                    <select name="forma_pagamento" id="forma_pagamento" class="input-field">
+                        <option value="" selected disabled>Forma de pagamento</option>
+                        <option value="PIX">PIX</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                        <option value="Cartão de crédito">Cartão de crédito</option>
+                        <option value="Cartão de débito">Cartão de débito</option>
+                    </select>
+                    <span class="required-asterisk">*</span>
+                </div>
+                <!--Data da venda-->
+                <div class="input-container">
+                    <input type="date" name="dta_venda" id="dta_venda" class="input-field" required>
+                    <label for="dta_venda" class="input-label"></label>
+                    <span class="required-asterisk">*</span>
+                </div>
+                <!--Tipo de venda-->
+                <div class="checkbox-group">
+                    <label for="tipo_venda">
+                        <span>Tipo de venda</span>
+                        <span style="color: red; font-weight: bold">*</span>
+                    </label>
+                    <input type="radio" name="tipo_venda" id="tipo_venda"  value="Presencial" required> Presencial
+                    <input type="radio" name="tipo_venda" id="tipo_venda"  value="Online" required> Online
+                </div>
+                <!--Botão de cadastro-->
+                <div class="div-btn">
+                    <input type="submit" class="button" value="CADASTRAR"id="btnCadastrar"></input>
+                </div>
+            </section>
+        </form>
+    </div>
+    <script src="/static/js/vendascadastro.js"></script>
+</body>
+</html>
