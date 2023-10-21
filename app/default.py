@@ -311,7 +311,75 @@ def vendas_cadastro():
 @login_required
 @app.route("/produtos", methods=['GET', 'POST'])
 def produtos():
-    return render_template("produtos.html")
+    produtos = Produto.query.filter_by(id_usuario=current_user.id).all()
+    return render_template("produtos.html", produtos=produtos)
+
+@login_required
+@app.route("/produtoscadastro", methods=['GET', 'POST'])
+def produtos_cadastro():
+    session.pop('success', None)
+    session.pop('error', None)    
+
+    if request.method == 'POST':
+        descricao = request.form.get('descricao')
+        categoria = request.form.get('categoria')
+        sub_categoria = request.form.get('sub_categoria')
+        tamanho = request.form.get('tamanho')
+        cor = request.form.get('cor')
+        medidas = request.form.get('medidas')
+        marca = request.form.get('marca')
+        preco_custo = request.form.get('preco_custo')
+        preco_venda = request.form.get('preco_venda')
+        foto = request.files.get('foto')
+        if foto:
+            foto_data = foto.read()
+        else:
+            foto_data = None
+
+
+        if not sub_categoria and cor and medidas and marca and preco_custo and foto_data:
+            sub_categoria = None
+            cor = None
+            medidas = None
+            marca = None
+            preco_custo = None
+            foto_data = None
+
+
+        if descricao and categoria and tamanho and preco_venda:
+            produtos = Produto(descricao, categoria, sub_categoria, tamanho, cor, medidas, marca, preco_custo, preco_venda, foto)
+            db.session.add(produtos)
+            produtos.id_usuario = current_user.id
+            try:
+                db.session.commit()
+                flash('Cadastro do produto realizado com sucesso!', 'success')
+            except Exception as e:
+                print(f'Erro durante o cadastro', e)
+                db.session.rollback()
+                flash('Erro ao cadastrar o produto', 'error')
+
+    return render_template("produtoscadastro.html")
+
+@login_required
+@app.route("/excluirprodutos/<int:id>", methods=['GET'])
+def excluir_produtos(id):
+    produtos = Produto.query.filter_by(id=id, id_usuario=current_user.id).first()
+
+    if produtos is None:
+        return jsonify({"error": "Produto não encontrado"}), 404
+
+    db.session.delete(produtos)
+
+    try:
+        db.session.commit()
+        flash('Produto excluído com sucesso!', 'success')
+        return redirect(url_for("produtos"))
+    except Exception as e:
+        db.session.rollback()
+        flash('Erro ao excluir produto', 'error')
+        print(f'Erro durante a exclusão do produto: {str(e)}')
+
+    return render_template('produtos.html')
 
 @login_required
 @app.route("/clientes", methods=['GET', 'POST'])

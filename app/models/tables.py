@@ -55,29 +55,30 @@ class Produto(db.Model):
     __tablename__ = "produtos"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    descricao = db.Column(db.String(120))
     categoria = db.Column(db.String(80))
     sub_categoria = db.Column(db.String(80))
-    descricao = db.Column(db.String(120))
     tamanho = db.Column(db.String(30))
     cor = db.Column(db.String(30))
     medidas = db.Column(db.Integer)
     marca = db.Column(db.String(80))
-    foto = db.Column(db.LargeBinary)
     preco_custo = db.Column(db.Integer)
     preco_venda = db.Column(db.Integer)
+    foto = db.Column(db.LargeBinary)
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
 
 
     def __init__(self, categoria, sub_categoria, descricao, tamanho, cor, medidas, marca, foto, preco_custo, preco_venda):
+        self.descricao = descricao
         self.categoria = categoria
         self.sub_categoria = sub_categoria
-        self.descricao = descricao
+        self.tamanho = tamanho
         self.cor = cor
         self.medidas = medidas
         self.marca = marca
-        self.foto = foto
         self.preco_custo = preco_custo
         self.preco_venda = preco_venda
+        self.foto = foto
 
     def __repr__(self):
         return "<Produto %r>" % self.id
