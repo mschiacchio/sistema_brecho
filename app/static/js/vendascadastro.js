@@ -41,11 +41,50 @@ function adicionarProduto() {
     const produtosContainer = document.getElementById('produtos-container');
     const novoCampoProduto = document.querySelector('.campo-produto').cloneNode(true);
     produtosContainer.appendChild(novoCampoProduto);
+
+    // Após a clonagem, limpe os valores dos campos clonados
+    limparCamposClonados(novoCampoProduto);
+
+    // Atualize a visibilidade do botão de remover
+    atualizarVisibilidadeBotaoRemover();
+}
+
+function limparCamposClonados(campoClonado) {
+    // Selecione todos os campos de entrada dentro do campo clonado
+    const camposDeEntrada = campoClonado.querySelectorAll('input, select');
+
+    // Limpe os valores de todos os campos
+    camposDeEntrada.forEach((campo) => {
+        campo.value = '';
+    });
 }
 
 function removerProduto(button) {
     const produtosContainer = document.getElementById('produtos-container');
     if (produtosContainer.children.length > 1) {
         produtosContainer.removeChild(button.parentElement);
+
+        // Após a remoção, atualize novamente a visibilidade do botão de remover
+        atualizarVisibilidadeBotaoRemover();
     }
 }
+
+function atualizarVisibilidadeBotaoRemover() {
+    const produtosContainer = document.getElementById('produtos-container');
+    const botoesRemover = produtosContainer.querySelectorAll('button.remove-produto');
+
+    if (produtosContainer.children.length > 1) {
+        // Se houver mais de uma seção, torne os botões de remover visíveis
+        botoesRemover.forEach((botao) => {
+            botao.style.display = 'block';
+        });
+    } else {
+        // Se houver apenas uma seção ou nenhuma, torne os botões de remover invisíveis
+        botoesRemover.forEach((botao) => {
+            botao.style.display = 'none';
+        });
+    }
+}
+
+// Chame a função para garantir a visibilidade correta no carregamento da página
+atualizarVisibilidadeBotaoRemover();

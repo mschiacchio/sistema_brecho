@@ -56,6 +56,8 @@
                 <th>Preço de custo</th>
                 <th>Preço de venda</th>
                 <th>Foto</th>
+                <th>Vendido?</th>
+                <th>ID da Venda</th>
                 <th>Editar</th>
                 <th>Excluir</th>
             </tr>
@@ -71,9 +73,17 @@
                 <td>{{ produto.cor }}</td>
                 <td>{{ produto.medidas }}</td>
                 <td>{{ produto.marca }}</td>
-                <td>R${{ produto.preco_custo }}</td>
-                <td>R${{ produto.preco_venda }}</td>
+                <td>{{ produto.preco_custo }}</td>
+                <td>{{ produto.preco_venda }}</td>
                 <td>{{ produto.foto }}</td>
+                <td>
+                    {% if produto.vendido %}
+                        SIM
+                    {% else %}
+                        NÃO
+                    {% endif %}
+                </td>
+                <td>{{ produto.id_venda }}</td>
                 <td>
                     <a href="/editarprodutos/{{ produto.id }}">
                     <div class="icon-container"><i class="fas fa-pencil-alt"></i></div>

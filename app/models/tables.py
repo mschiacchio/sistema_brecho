@@ -42,6 +42,8 @@ class Cliente(db.Model):
     celular = db.Column(db.Integer)
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
 
+    vendas = db.relationship("Venda", backref="cliente")
+
 
     def __init__(self, nome, apelido, celular):
         self.nome = nome
@@ -65,10 +67,13 @@ class Produto(db.Model):
     preco_custo = db.Column(db.Integer)
     preco_venda = db.Column(db.Integer)
     foto = db.Column(db.LargeBinary)
+    vendido = db.Column(db.Boolean, default=False)
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
+    id_venda = db.Column(db.Integer, db.ForeignKey('vendas.id'))
 
+    venda = db.relationship('Venda', foreign_keys=[id_venda])
 
-    def __init__(self, categoria, sub_categoria, descricao, tamanho, cor, medidas, marca, foto, preco_custo, preco_venda):
+    def __init__(self, descricao, categoria, sub_categoria, tamanho, cor, medidas, marca, preco_custo, preco_venda, foto):
         self.descricao = descricao
         self.categoria = categoria
         self.sub_categoria = sub_categoria
@@ -128,21 +133,22 @@ class Venda(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     id_produto = db.Column(db.Integer, db.ForeignKey('produtos.id'))
     desconto = db.Column(db.Integer) 
-    forma_pagamento = db.Column(db.String(50))
     val_total = db.Column(db.Float)
+    forma_pagamento = db.Column(db.String(50))
     tipo_venda = db.Column(db.String(10))
     dta_venda = db.Column(db.Date) 
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
+    nome_cliente = db.Column(db.String, db.ForeignKey('clientes.nome'))
 
-    produto = db.relationship('Produto', foreign_keys=id_produto)
+    produto = db.relationship('Produto', foreign_keys=[id_produto])
 
-    def __init__(self, id_produto, desconto, forma_pagamento, val_total, tipo_venda, dta_venda):
-        self.id_produto = id_produto
+    def __init__(self, desconto, val_total, forma_pagamento, tipo_venda, dta_venda, nome_cliente):
         self.desconto = desconto
-        self.forma_pagamento = forma_pagamento
         self.val_total = val_total
+        self.forma_pagamento = forma_pagamento
         self.tipo_venda = tipo_venda
         self.dta_venda = dta_venda
+        self.nome_cliente = nome_cliente
 
     def __repr__(self):
         return "<Venda %r>" % self.id

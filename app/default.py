@@ -3,6 +3,8 @@ from flask_login import login_user, logout_user, login_required, current_user
 from datetime import datetime
 from . import app, db, login_manager
 from .models.tables import Usuario, Cliente, Produto, Fornecedor, Compra, Venda
+from sqlalchemy.exc import IntegrityError
+
 
 @login_manager.unauthorized_handler
 def unauthorized():
@@ -261,7 +263,8 @@ def editar_fornecedores(id):
 @login_required
 @app.route("/vendas", methods=['GET', 'POST'])
 def vendas():
-    return render_template("vendas.html")
+    vendas = Venda.query.filter_by(id_usuario=current_user.id).all()
+    return render_template("vendas.html", vendas=vendas)
 
 def produto_existe(id_produto):
     produto = Produto.query.get(id_produto)
@@ -274,39 +277,77 @@ def vendas_cadastro():
     session.pop('error', None)    
 
     if request.method == 'POST':
-        id_produto = request.form.get('id_produto')
+        ids_produtos = request.form.getlist('id_produto[]')
         desconto = request.form.get('desconto')
         val_total_str = request.form.get('val_total')
-        val_total_str = val_total_str.replace('R$', '')
-        val_total_str = val_total_str.replace(',', '.')
+        val_total_str = val_total_str.replace('R$', '').replace(',', '.')
         forma_pagamento = request.form.get('forma_pagamento')
         tipo_venda = request.form.get('tipo_venda')
         dta_venda = datetime.strptime(request.form.get('dta_venda'), '%Y-%m-%d').date()
-
+        nome_cliente = request.form.get('nome_cliente')
         try:
             val_total = float(val_total_str)
         except ValueError:
-            val_total = None
+            val_total = ""
 
         if not desconto:
             desconto = ""
+        if not nome_cliente:
+            nome_cliente = ""
 
-        if id_produto and val_total and forma_pagamento and tipo_venda and dta_venda:
-            if produto_existe(id_produto):
-                vendas = Venda(id_produto, desconto, val_total, forma_pagamento, tipo_venda, dta_venda)
-                db.session.add(vendas)
-                vendas.id_usuario = current_user.id
-                try:
-                    db.session.commit()
-                    flash('Cadastro da venda realizado com sucesso!', 'success')
-                except Exception as e:
-                    print(f'Erro durante o cadastro', e)
+        nova_venda = Venda(desconto=desconto, val_total=val_total, forma_pagamento=forma_pagamento, tipo_venda=tipo_venda, dta_venda=dta_venda, nome_cliente=nome_cliente)
+        nova_venda.id_usuario = current_user.id
+
+        try:
+            db.session.add(nova_venda)
+            db.session.flush()  # Obtenha o ID da nova venda
+            nova_venda_id = nova_venda.id
+
+            for id_produto in ids_produtos:
+                if produto_existe(id_produto):
+                    produto = Produto.query.get(id_produto)
+                    produto.vendido = True
+                    nova_venda.produto = produto
+                    produto.id_venda = nova_venda_id
+                else:
+                    flash('ID do produto não existe. Cadastre o produto primeiro.', 'error')
                     db.session.rollback()
-                    flash('Erro ao cadastrar as compras', 'error')
-            else:
-                flash('ID do produto não existe. Cadastre o produto primeiro.', 'error')
+                    return render_template("vendascadastro.html")
+
+            db.session.commit()
+            flash('Cadastro da venda realizado com sucesso!', 'success')
+
+        except IntegrityError:
+            db.session.rollback()
+            flash('Erro ao cadastrar as vendas', 'error')
 
     return render_template("vendascadastro.html")
+
+@login_required
+@app.route("/excluirvendas/<int:id>", methods=['GET'])
+def excluir_vendas(id):
+    venda = Venda.query.filter_by(id=id, id_usuario=current_user.id).first()
+
+    if venda is None:
+        return jsonify({"error": "Venda não encontrado"}), 404
+
+    produtos_vinculados = Produto.query.filter_by(id_venda=id).all()
+
+    db.session.delete(venda)
+
+    for produto in produtos_vinculados:
+        produto.vendido = False
+        produto.id_venda = ""
+    try:
+        db.session.commit()
+        flash('Venda excluída com sucesso e os produtos voltaram para o estoque!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Erro ao excluir venda', 'error')
+        print(f'Erro durante a exclusão da venda: {str(e)}')
+
+    return redirect(url_for('vendas'))
+
 
 @login_required
 @app.route("/produtos", methods=['GET', 'POST'])
@@ -337,20 +378,25 @@ def produtos_cadastro():
             foto_data = None
 
 
-        if not sub_categoria and cor and medidas and marca and preco_custo and foto_data:
-            sub_categoria = None
-            cor = None
-            medidas = None
-            marca = None
-            preco_custo = None
-            foto_data = None
+        if not sub_categoria:
+            sub_categoria = ""
+        if not cor:
+            cor = ""
+        if not medidas:
+            medidas = ""
+        if not marca:
+            marca = ""
+        if not preco_custo:
+            preco_custo = ""
+        if not foto_data:
+            foto_data = ""
 
 
         if descricao and categoria and tamanho and preco_venda:
             produtos = Produto(descricao, categoria, sub_categoria, tamanho, cor, medidas, marca, preco_custo, preco_venda, foto)
-            db.session.add(produtos)
             produtos.id_usuario = current_user.id
             try:
+                db.session.add(produtos)
                 db.session.commit()
                 flash('Cadastro do produto realizado com sucesso!', 'success')
             except Exception as e:
