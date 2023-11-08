@@ -427,6 +427,27 @@ def excluir_produtos(id):
 
     return render_template('produtos.html')
 
+@app.route('/get_product_info', methods=['GET'])
+def get_product_info():
+    product_id = request.args.get('product_id')
+
+    produto = Produto.query.filter_by(id=product_id, id_usuario=current_user.id).first()
+
+    if produto:
+        product_info = {
+            'descricao': produto.descricao,
+            'categoria': produto.categoria,
+            'tamanho': produto.tamanho,
+            'cor': produto.cor,
+            'marca': produto.marca,
+            'preco_venda': produto.preco_venda,
+            'foto': produto.foto,
+            'vendido': produto.vendido,
+        }
+        return jsonify(product_info)
+    else:
+        return jsonify({'error': 'Produto não encontrado'})
+
 @login_required
 @app.route("/clientes", methods=['GET', 'POST'])
 def clientes():

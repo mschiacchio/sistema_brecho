@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sistema de brechó</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendas.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="/app/static/js/vendascadastro.js"></script>
 </head>
 <body>
@@ -24,7 +26,9 @@
         <a href="/clientes">Clientes</a>
     </div>
     <h1 class="titulo">Cadastrar vendas</h1>
-    <button class="button_adc"><a href="vendas">Ver minhas vendas</a></button>
+    <div style="text-align: center;">
+        <button class="button" style="margin-bottom: 20px;"><a href="vendas">Ver minhas vendas</a></button>
+    </div>
     {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
             {% for category, message in messages %}
@@ -40,9 +44,10 @@
             {% endfor %}
             {% endif %}
     {% endwith %}
-    <div id="container-login" class="vendas-section">
+    {% block content %}
+    <div id="container-login" class="container-vendas">
         <form action="{{ url_for('vendas_cadastro')}}" method="POST">
-            <section id="vendas">
+            <section id="vendas" class="section-vendas">
                 <div id="produtos-container">
                     <div class="campo-produto">
                         <!--ID do Produto-->
@@ -52,10 +57,33 @@
                             <span class="required-asterisk">*</span>
                         </div>
                         <button type="button" class="button_adc" onclick="adicionarProduto()"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg></button>
-                        <button type="button" class="remove-produto" onclick="removerProduto(this)"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M170.5 51.6L151.5 80h145l-19-28.4c-1.5-2.2-4-3.6-6.7-3.6H177.1c-2.7 0-5.2 1.3-6.7 3.6zm147-26.6L354.2 80H368h48 8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8V432c0 44.2-35.8 80-80 80H112c-44.2 0-80-35.8-80-80V128H24c-13.3 0-24-10.7-24-24S10.7 80 24 80h8H80 93.8l36.7-55.1C140.9 9.4 158.4 0 177.1 0h93.7c18.7 0 36.2 9.4 46.6 24.9zM80 128V432c0 17.7 14.3 32 32 32H336c17.7 0 32-14.3 32-32V128H80zm80 64V400c0 8.8-7.2 16-16 16s-16-7.2-16-16V192c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0V400c0 8.8-7.2 16-16 16s-16-7.2-16-16V192c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0V400c0 8.8-7.2 16-16 16s-16-7.2-16-16V192c0-8.8 7.2-16 16-16s16 7.2 16 16z"/></svg></button>
+
                     </div>
                 </div>
-            
+                <table id="tabelaCadastroVendas" class="tabela-cadastro" border="2">
+                    <thead>
+                        <tr>
+                            <th>ID Produto</th>
+                            <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th>Tamanho</th>
+                            <th>Cor</th>
+                            <th>Marca</th>
+                            <th>Preço de venda</th>
+                            <th>Foto</th>
+                            <th>Excluir</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+                <!--Valor total pago-->
+                <div class="input-container">
+                    <input type="text" name="val_total" id="val_total" class="input-field formatar-reais" required>
+                    <label for="val_total" class="input-label">Valor total da compra</label>
+                    <span class="required-asterisk">*</span>
+                </div>
                 <!--Desconto-->
                 <div class="input-container">
                     <input type="number" name="desconto" id="desconto" class="input-field">
@@ -63,9 +91,8 @@
                 </div>
                 <!--Valor total pago-->
                 <div class="input-container">
-                    <input type="text" name="val_total" id="val_total" class="input-field formatar-reais" required>
-                    <label for="val_total" class="input-label">Valor total da compra</label>
-                    <span class="required-asterisk">*</span>
+                    <input type="text" name="val_pago" id="val_pago" class="input-field formatar-reais">
+                    <label for="val_total" class="input-label">Valor total pago</label>
                 </div>
                 <!--Forma de pagamento-->
                 <div class="input-container">
@@ -105,6 +132,7 @@
             </section>
         </form>
     </div>
-    <script src="/static/js/vendascadastro.js"></script>
+    {% endblock %}
+<script src="/static/js/vendascadastro.js"></script>
 </body>
 </html>

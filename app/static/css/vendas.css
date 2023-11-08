@@ -18,8 +18,11 @@ body{
     left: 15px;
 }
 .button{
+    margin-bottom: 20px;
     font-size: 15px;
     margin-bottom: 13px;
+    display: block;
+    margin: 0 auto;
     background-color: #e4dbd9;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -72,9 +75,10 @@ body{
 }
 .button_adc {
     min-width: 10px;
-    font-size: 15px;
+    font-size: 19px;
     margin: 13px auto;
-    background-color: #e4dbd9;
+    border: none;
+    background-color: transparent;
     cursor: pointer;
     transition: background-color 0.3s ease;
     border-radius: 20px;
@@ -110,42 +114,33 @@ body{
     border-radius: 5px;
     margin-bottom: 10px;
 }
-.vendas-section{ 
-    background-color:#d6d4d4;
-    line-height: 1.5;
-    text-align: center;
+.container-vendas {
+    background-color: #d6d4d4;
     border-radius: 20px;
-    width: 30%;
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative; /* Altere para position: relative */
     box-shadow: 2px 5px 5px grey;
+    width: 80%;
+    margin: 0 auto; /* Centralize horizontalmente */
+    text-align: center; /* Centralize o conteúdo horizontalmente */
+    display: flex; /* Centralize verticalmente */
+    flex-direction: column; /* Centralize verticalmente */
+    align-items: center; /* Centralize verticalmente */
+    justify-content: center; /* Centralize verticalmente */
 }
-/* Estilos para telas maiores */
-@media (min-width: 1025px) {
-    .vendas-section {
-        margin-top: 300px; /* Aumente a margem superior para telas maiores */
-    }
+
+.section-vendas{
+   height: 100%;
+   width: 100%;
+   line-height: 1.5;
 }
-/* Estilos para telas médias */
-@media (max-width: 1024px) {
-    .vendas-section {
-        margin-top: 280px; /* Ajuste a margem superior para telas médias */
-    }
-}
-/* Estilos para telas pequenas */
-@media (max-width: 768px) {
-    .vendas-section {
-        margin-top: 270px; /* Reduza a margem superior para telas menores */
-    }
-}
+
 .input-container {
     position: relative;
     margin: 20px;
 }
 .input-container select {
     width: 100%; /* Preenche a largura do container pai */
-    max-width: 266px; /* Largura máxima para evitar que fique muito largo */
+    max-width: 390px; /* Largura máxima para evitar que fique muito largo */
 }
 .input-field {
     width: 50%;
@@ -189,7 +184,6 @@ body{
 }
 .tabela {
     border-collapse: collapse;
-    /* Combina as bordas das células */
     width: 100%;
     text-align: center;
     background-color: #c7c7c7;
@@ -210,4 +204,25 @@ a{
     font-weight: bold;
     position: absolute;
     top: 30%;
+}
+.tabela-cadastro{
+    margin-bottom: 80px;
+    border-collapse: separate;
+    border-spacing: 50px;
+
+}
+.tabela-cadastro th{
+    font-size: 13px;
+    background-color: transparent;
+    border: none;
+}
+.tabela-cadastro td{
+    font-size: 13px;
+
+}
+.remover-produto{
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
 }

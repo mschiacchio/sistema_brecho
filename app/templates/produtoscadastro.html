@@ -23,7 +23,9 @@
         <a href="/clientes">Clientes</a>
     </div>
     <h1 class="titulo">Cadastrar produtos</h1>
-    <button class="button_adc"><a href="produtos">Ver meus produtos</a></button>
+    <div style="text-align: center;">
+        <button class="button" style="margin-bottom: 20px;"><a href="produtos">Ver meus produtos</a></button>
+    </div>
     {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
             {% for category, message in messages %}
