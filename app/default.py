@@ -303,20 +303,24 @@ def vendas_cadastro():
             db.session.flush()  # Obtenha o ID da nova venda
             nova_venda_id = nova_venda.id
 
-            for id_produto in ids_produtos:
-                if produto_existe(id_produto):
-                    produto = Produto.query.get(id_produto)
-                    produto.vendido = True
-                    nova_venda.produto = produto
-                    produto.id_venda = nova_venda_id
-                else:
-                    flash('ID do produto não existe. Cadastre o produto primeiro.', 'error')
-                    db.session.rollback()
-                    return render_template("vendascadastro.html")
+            if ids_produtos:
+                print(f'IDs dos produtos: {ids_produtos}')
+                for id_produto in ids_produtos:
+                    print(f'Processando ID do produto: {id_produto}')
+                    if produto_existe(id_produto):
+                        produto = Produto.query.get(id_produto)
+                        produto.vendido = True
+                        nova_venda.produtos.append(produto)  # Use a propriedade de relacionamento
+                        produto.id_venda = nova_venda_id
+                    else:
+                        print(f'ID do produto {id_produto} não existe. Cadastre o produto primeiro.')
+                        db.session.rollback()
+                        return render_template("vendascadastro.html")
 
-            db.session.commit()
-            flash('Cadastro da venda realizado com sucesso!', 'success')
-
+                db.session.commit()
+                flash('Cadastro da venda realizado com sucesso!', 'success')
+            else:
+                print('Não há produtos')
         except IntegrityError:
             db.session.rollback()
             flash('Erro ao cadastrar as vendas', 'error')

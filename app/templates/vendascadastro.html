@@ -46,13 +46,13 @@
     {% endwith %}
     {% block content %}
     <div id="container-login" class="container-vendas">
-        <form action="{{ url_for('vendas_cadastro')}}" method="POST">
+        <form id="formVendas" action="{{ url_for('vendas_cadastro')}}" method="POST">
             <section id="vendas" class="section-vendas">
                 <div id="produtos-container">
                     <div class="campo-produto">
                         <!--ID do Produto-->
                         <div class="input-container">
-                            <input type="number" name="id_produto[]" id="id_produto" class="input-field" required>
+                            <input type="number" name="id_produto[]" id="id_produto" class="input-field">
                             <label for="id_produto" class="input-label">ID Produto</label>
                             <span class="required-asterisk">*</span>
                         </div>
@@ -78,21 +78,33 @@
                         
                     </tbody>
                 </table>
-                <!--Valor total pago-->
+                <!--Valor total-->
                 <div class="input-container">
-                    <input type="text" name="val_total" id="val_total" class="input-field formatar-reais" required>
-                    <label for="val_total" class="input-label">Valor total da compra</label>
-                    <span class="required-asterisk">*</span>
+                    <input type="text" name="valor" id="valor" class="input-field formatar-reais">
+                    <label for="valor" class="input-label">Valor total da compra</label>
+                    
                 </div>
                 <!--Desconto-->
                 <div class="input-container">
-                    <input type="number" name="desconto" id="desconto" class="input-field">
-                    <label for="desconto" class="input-label">Desconto em %</label>
+                    <label for="desconto" >Tipo de Desconto:</label>
+                    <br>
+                    <input type="radio" id="porcentagem" name="tipo_desconto" value="porcentagem"> 
+                    <label for="porcentagem">Porcentagem</label>
+                    
+                    <input type="radio" id="valor" name="tipo_desconto" value="valor"> 
+                    <label for="valor">Valor</label>
                 </div>
+
+                <div class="input-container">
+                    <input type="number" name="desconto" id="desconto" class="input-field">
+                    <label for="desconto" class="input-label" id="label-desconto">Desconto</label>
+                </div>
+
                 <!--Valor total pago-->
                 <div class="input-container">
-                    <input type="text" name="val_pago" id="val_pago" class="input-field formatar-reais">
+                    <input type="text" name="val_total" id="val_total" class="input-field formatar-reais" required>
                     <label for="val_total" class="input-label">Valor total pago</label>
+                    <span class="required-asterisk">*</span>
                 </div>
                 <!--Forma de pagamento-->
                 <div class="input-container">
@@ -118,12 +130,12 @@
                 </div>
                 <!--Tipo de venda-->
                 <div class="checkbox-group">
-                    <label for="tipo_venda">
+                    <div for="tipo_venda">
                         <span>Tipo de venda</span>
                         <span style="color: red; font-weight: bold">*</span>
-                    </label>
-                    <input type="radio" name="tipo_venda" id="tipo_venda"  value="Presencial" required> Presencial
-                    <input type="radio" name="tipo_venda" id="tipo_venda"  value="Online" required> Online
+                    </div>
+                    <input type="radio" name="tipo_venda" id="tipo_venda presencial"  value="Presencial" required> Presencial
+                    <input type="radio" name="tipo_venda" id="tipo_venda online"  value="Online" required> Online
                 </div>
                 <!--Botão de cadastro-->
                 <div class="div-btn">
