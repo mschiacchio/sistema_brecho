@@ -4,6 +4,8 @@ from datetime import datetime
 from . import app, db, login_manager
 from .models.tables import Usuario, Cliente, Produto, Fornecedor, Compra, Venda
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import NoResultFound
+
 
 
 @login_manager.unauthorized_handler
@@ -91,15 +93,14 @@ def compras_cadastro():
         qtd_pecas = request.form.get('qtd_pecas')
         lote = request.form.get('lote')
         val_total_pg_str = request.form.get('val_total_pg')
-        val_total_pg_str = val_total_pg_str.replace('R$', '')
-        val_total_pg_str = val_total_pg_str.replace(',', '.')
+        val_total_pg_str = val_total_pg_str.replace('R$', '').replace(',', '.')
         dta_compra = datetime.strptime(request.form.get('dta_compra'), '%Y-%m-%d').date()
 
         try:
             val_total_pg = float(val_total_pg_str)
         except ValueError:
             # Trate erros de conversão, se necessário
-            val_total_pg = None
+            val_total_pg = ''
 
 
         if id_fornecedor and qtd_pecas and val_total_pg and lote and dta_compra:
@@ -304,53 +305,54 @@ def vendas_cadastro():
             nova_venda_id = nova_venda.id
 
             if ids_produtos:
-                print(f'IDs dos produtos: {ids_produtos}')
                 for id_produto in ids_produtos:
-                    print(f'Processando ID do produto: {id_produto}')
-                    if produto_existe(id_produto):
-                        produto = Produto.query.get(id_produto)
+                    produto = Produto.query.get(id_produto)
+
+                    if produto and not produto.vendido:
                         produto.vendido = True
-                        nova_venda.produtos.append(produto)  # Use a propriedade de relacionamento
-                        produto.id_venda = nova_venda_id
-                    else:
-                        print(f'ID do produto {id_produto} não existe. Cadastre o produto primeiro.')
-                        db.session.rollback()
-                        return render_template("vendascadastro.html")
+                        nova_venda.produtos.append(produto)
 
                 db.session.commit()
                 flash('Cadastro da venda realizado com sucesso!', 'success')
             else:
-                print('Não há produtos')
+                flash('Não há produtos', 'info')
         except IntegrityError:
             db.session.rollback()
             flash('Erro ao cadastrar as vendas', 'error')
 
+
     return render_template("vendascadastro.html")
+
+from sqlalchemy.orm import clear_mappers
 
 @login_required
 @app.route("/excluirvendas/<int:id>", methods=['GET'])
 def excluir_vendas(id):
-    venda = Venda.query.filter_by(id=id, id_usuario=current_user.id).first()
-
-    if venda is None:
-        return jsonify({"error": "Venda não encontrado"}), 404
-
-    produtos_vinculados = Produto.query.filter_by(id_venda=id).all()
-
-    db.session.delete(venda)
-
-    for produto in produtos_vinculados:
-        produto.vendido = False
-        produto.id_venda = ""
     try:
+        venda = Venda.query.filter_by(id=id, id_usuario=current_user.id).one()
+
+        # Desvincular a venda dos produtos e marcá-los como não vendidos
+        for produto in venda.produtos:
+            produto.vendido = False
+            produto.id_venda = None
+
+        # Excluir a venda e commit manualmente
+        db.session.delete(venda)
         db.session.commit()
+
         flash('Venda excluída com sucesso e os produtos voltaram para o estoque!', 'success')
+
+    except NoResultFound:
+        flash('Venda não encontrada', 'error')
+
     except Exception as e:
         db.session.rollback()
         flash('Erro ao excluir venda', 'error')
         print(f'Erro durante a exclusão da venda: {str(e)}')
 
     return redirect(url_for('vendas'))
+
+
 
 
 @login_required
@@ -409,6 +411,71 @@ def produtos_cadastro():
                 flash('Erro ao cadastrar o produto', 'error')
 
     return render_template("produtoscadastro.html")
+
+@login_required
+@app.route("/editarprodutos/<int:id>", methods=['GET', 'POST'])
+def editar_produtos(id):
+    produtos = Produto.query.filter_by(id=id, id_usuario=current_user.id).first()
+
+    if produtos is None:
+        return jsonify({"error": "Produto não encontrado"}), 404
+    
+    if request.method == "POST":
+        descricao = request.form.get('descricao')
+        categoria = request.form.get('categoria')
+        sub_categoria = request.form.get('sub_categoria')
+        tamanho = request.form.get('tamanho')
+        cor = request.form.get('cor')
+        medidas = request.form.get('medidas')
+        marca = request.form.get('marca')
+        preco_custo = request.form.get('preco_custo')
+        preco_venda = request.form.get('preco_venda')
+        foto = request.files.get('foto')
+        if foto:
+            foto_data = foto.read()
+        else:
+            foto_data = None
+        vendido = request.form.get('vendido')
+
+        if not sub_categoria:
+            sub_categoria = ""
+        if not cor:
+            cor = ""
+        if not medidas:
+            medidas = ""
+        if not marca:
+            marca = ""
+        if not preco_custo:
+            preco_custo = ""
+        if not foto_data:
+            foto_data = ""
+
+
+        if descricao and categoria and tamanho and preco_venda:
+        
+            produtos.descricao = descricao
+            produtos.categoria = categoria
+            produtos.sub_categoria = sub_categoria
+            produtos.tamanho = tamanho
+            produtos.cor = cor
+            produtos.medidas = medidas
+            produtos.marca = marca
+            produtos.preco_custo = preco_custo
+            produtos.preco_venda = preco_venda
+            produtos.foto = foto
+            produtos.vendido = vendido
+            try:
+                db.session.commit()
+                flash('Produto editado com sucesso!', 'success')
+                return redirect(url_for('produtos'))
+            except Exception as e:
+                print(f'Erro durante a edição', e)
+                db.session.rollback()
+                flash('Erro ao editar o produto', 'error')
+        else:
+            flash('Algum item do produto não foi encontrado', 'error')
+        
+    return render_template("editarprodutos.html", produtos=produtos) 
 
 @login_required
 @app.route("/excluirprodutos/<int:id>", methods=['GET'])

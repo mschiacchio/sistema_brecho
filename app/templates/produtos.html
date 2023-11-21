@@ -83,7 +83,12 @@
                         NÃO
                     {% endif %}
                 </td>
-                <td>{{ produto.id_venda }}</td>
+                <td>
+                    {% for venda in produto.vendas %}
+                        {{ venda.id }}
+                        {% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
                 <td>
                     <a href="/editarprodutos/{{ produto.id }}">
                     <div class="icon-container"><i class="fas fa-pencil-alt"></i></div>

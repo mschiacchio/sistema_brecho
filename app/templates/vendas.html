@@ -61,7 +61,12 @@
             {% for venda in vendas %}
             <tr>
                 <td>{{ venda.id }}</td>
-                <td>{{ venda.id_produto }}</td>
+                <td>
+                    {% for produto in venda.produtos %}
+                        {{ produto.id }}
+                        {% if not loop.last %}| {% endif %}
+                    {% endfor %}
+                </td>                
                 <td>{{ venda.desconto }}</td>
                 <td>R${{ venda.val_total }}</td>
                 <td>{{ venda.forma_pagamento }}</td>

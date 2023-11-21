@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de brechó</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/produtos.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+    <div class="usuario-logado"><i class="fas fa-user"></i> {{ current_user.usuario }}</div>
+    <div class="logout">
+        <form method="POST" action="{{ url_for('logout') }}">
+            <button class="button" type="submit">Sair</button>
+        </form>
+    </div>
+    <div class="navbar">
+        <button onclick="window.history.back()" class="button button_voltar">Voltar</button>
+        <a href="/home"><i class="fas fa-home icone-casa"></i></a>
+        <a href="/compras">Compras</a>
+        <a href="/vendas">Vendas</a>
+        <a href="/fornecedores">Fornecedores</a>
+        <a href="/clientes">Clientes</a>
+    </div>
+    <h1 class="titulo">Editar</h1>
+    <button onclick="location.href='/produtos'" class="button_adc">Cancelar edição</button>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            {% if category == 'error' %}
+            <div class="error">
+                {{ messages[0][1] }}
+            </div>
+            {% elif category == 'success' %}
+            <div class="success">
+                {{ messages[0][1] }}
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+    {% endwith %}
+    <div id="container-login" class="produtos-section">
+        <form action="{{ url_for('editar_produtos', id=produtos.id) }}" method="POST">
+            <section id="produtos">
+                <!--Descrição-->
+                <div class="input-container">
+                    <input type="text" name="descricao" value="{{ produtos.descricao }}" class="input-field" required>
+                    <label for="descricao" class="input-label">Descrição</label>
+                    <span class="required-asterisk">*</span>
+                </div>
+                <!--Categoria-->
+                <div class="input-container">
+                    <select name="categoria" id="categoria" class="input-field">
+                        <option value="" selected disabled>Selecione a categoria</option>
+                        <option value="Blusa" {% if produtos.categoria == 'Blusa' %}selected{% endif %}>Blusa</option>
+                        <option value="Regata" {% if produtos.categoria == 'Regata' %}selected{% endif %}>Regata</option>
+                        <option value="Saia" {% if produtos.categoria == 'Saia' %}selected{% endif %}>Saia</option>
+                        <option value="Calca" {% if produtos.categoria == 'Calca' %}selected{% endif %}>Calça</option>
+                        <option value="Short" {% if produtos.categoria == 'Short' %}selected{% endif %}>Short</option>
+                        <option value="Bermuda" {% if produtos.categoria == 'Bermuda' %}selected{% endif %}>Bermuda</option>
+                        <option value="Vestido" {% if produtos.categoria == 'Vestido' %}selected{% endif %}>Vestido</option>
+                        <option value="Academia" {% if produtos.categoria == 'Academia' %}selected{% endif %}>Academia</option>
+                        <option value="Macacao" {% if produtos.categoria == 'Macacao' %}selected{% endif %}>Macacão</option>
+                        <option value="Vestido_festa" {% if produtos.categoria == 'Vestido_festa' %}selected{% endif %}>Vestido de festa</option>
+                    </select>
+                    
+                    <span class="required-asterisk">*</span>
+                </div>
+                <!--Sub-categoria-->
+                <div class="input-container">
+                    <input type="text" name="sub_categoria" value="{{ produtos.sub_categoria }}" class="input-field">
+                    <label for="sub_categoria" class="input-label">Sub-categoria</label>
+                </div>
+                <!--Tamanho-->
+                <div class="input-container">
+                    <input type="text" name="tamanho" value="{{ produtos.tamanho }}" class="input-field" required>
+                    <label for="tamanho" class="input-label">Tamanho</label>
+                    <span class="required-asterisk">*</span>
+                </div>
+                <!--Cor-->
+                <div class="input-container">
+                    <input type="text" name="cor" value="{{ produtos.cor }}" class="input-field">
+                    <label for="cor" class="input-label">Cor</label>
+                </div>
+                <!--Medidas-->
+                <div class="input-container">
+                    <input type="number" name="medidas" value="{{ produtos.medidas }}" class="input-field">
+                    <label for="medidas" class="input-label">Medidas</label>
+                </div>
+                <!--Marca-->
+                <div class="input-container">
+                    <input type="text" name="marca" value="{{ produtos.marca }}" class="input-field">
+                    <label for="marca" class="input-label">Marca</label>
+                </div>
+                <!--Preço de custo-->
+                <div class="input-container">
+                    <input type="text" name="preco_custo" value="{{ produtos.preco_custo}}" class="input-field formatar-reais">
+                    <label for="preco_custo" class="input-label">Preço de custo</label>
+                </div>
+                <!--Preço de venda-->
+                <div class="input-container">
+                    <input type="text" name="preco_venda" value="{{ produtos.preco_venda }}" class="input-field formatar-reais" required>
+                    <label for="preco_venda" class="input-label">Preço de venda</label>
+                    <span class="required-asterisk">*</span>
+                </div>
+                <!--Foto-->
+                <div class="input-container">
+                    <input type="file" name="foto" value="{{ produtos.foto }}" class="input-field" accept="image/*">
+                    <label for="foto" class="input-label">Foto</label>
+                </div>
+                <!--Botão de cadastro-->
+                <div class="div-btn">
+                    <input type="submit" class="button" value="EDITAR"id="btnCadastrar"></input>
+                </div>
+            </section>
+        </form>
+    </div>
+    <script src="/static/js/produtoscadastro.js"></script>
+</body>
+</html>

@@ -52,7 +52,11 @@ class Cliente(db.Model):
 
     def __repr__(self):
         return "<Cliente %r>" % self.nome
-
+    
+produtos_vendas = db.Table('produtos_vendas',
+    db.Column('id_produto', db.Integer, db.ForeignKey('produtos.id')),
+    db.Column('id_venda', db.Integer, db.ForeignKey('vendas.id'))
+)
 class Produto(db.Model):
     __tablename__ = "produtos"
 
@@ -69,9 +73,8 @@ class Produto(db.Model):
     foto = db.Column(db.LargeBinary)
     vendido = db.Column(db.Boolean, default=False)
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
-    id_venda = db.Column(db.Integer, db.ForeignKey('vendas.id'))
 
-    venda = db.relationship('Venda', foreign_keys=[id_venda])
+    vendas = db.relationship('Venda', secondary=produtos_vendas, back_populates='produtos')
 
     def __init__(self, descricao, categoria, sub_categoria, tamanho, cor, medidas, marca, preco_custo, preco_venda, foto):
         self.descricao = descricao
@@ -131,7 +134,6 @@ class Venda(db.Model):
     __tablename__ = "vendas"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    id_produto = db.Column(db.Integer, db.ForeignKey('produtos.id'))
     desconto = db.Column(db.Integer) 
     val_total = db.Column(db.Float)
     forma_pagamento = db.Column(db.String(50))
@@ -140,7 +142,7 @@ class Venda(db.Model):
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
     nome_cliente = db.Column(db.String, db.ForeignKey('clientes.nome'))
 
-    produto = db.relationship('Produto', foreign_keys=[id_produto])
+    produtos = db.relationship('Produto', secondary=produtos_vendas, back_populates='vendas')
 
     def __init__(self, desconto, val_total, forma_pagamento, tipo_venda, dta_venda, nome_cliente):
         self.desconto = desconto
