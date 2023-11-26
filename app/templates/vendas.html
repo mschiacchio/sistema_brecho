@@ -68,7 +68,7 @@
                     {% endfor %}
                 </td>                
                 <td>{{ venda.desconto }}</td>
-                <td>R${{ venda.val_total }}</td>
+                <td>{{ formatar_preco(venda.val_total) }}</td>
                 <td>{{ venda.forma_pagamento }}</td>
                 <td>{{ venda.dta_venda.strftime("%d/%m/%Y") }}</td>
                 <td>{{ venda.nome_cliente }}</td>

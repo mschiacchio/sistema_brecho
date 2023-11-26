@@ -55,6 +55,7 @@
                 <th>Marca</th>
                 <th>Preço de custo</th>
                 <th>Preço de venda</th>
+                <th>Preço final</th>
                 <th>Foto</th>
                 <th>Vendido?</th>
                 <th>ID da Venda</th>
@@ -73,9 +74,26 @@
                 <td>{{ produto.cor }}</td>
                 <td>{{ produto.medidas }}</td>
                 <td>{{ produto.marca }}</td>
-                <td>{{ produto.preco_custo }}</td>
-                <td>{{ produto.preco_venda }}</td>
-                <td>{{ produto.foto }}</td>
+                <td>
+                    {% if produto.preco_custo is not none %}
+                        {{ formatar_preco(produto.preco_custo) }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if produto.preco_venda is not none %}
+                        {{ formatar_preco(produto.preco_venda) }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if produto.preco_final is not none %}
+                        {{ formatar_preco(produto.preco_final) }}
+                    {% endif %}
+                </td>                
+                <td>
+                    {% if produto.foto is not none %}
+                        R${{ produto.foto }}
+                    {% endif %}
+                </td>
                 <td>
                     {% if produto.vendido %}
                         SIM

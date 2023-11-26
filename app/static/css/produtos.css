@@ -89,7 +89,7 @@ body{
     color: rgb(0, 0, 0);
     padding: 10px;
     border-radius: 5px;
-    margin-bottom: 10px;
+    margin: 20px;
     font-weight: bold;
 }
 .error {

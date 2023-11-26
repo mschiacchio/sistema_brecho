@@ -23,7 +23,6 @@ def upgrade():
         batch_op.drop_column('id_venda')
 
     with op.batch_alter_table('vendas', schema=None) as batch_op:
-        batch_op.drop_constraint('produtos.id', type_='foreignkey')
         batch_op.drop_column('id_produto')
 
 

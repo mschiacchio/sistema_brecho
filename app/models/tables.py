@@ -68,15 +68,16 @@ class Produto(db.Model):
     cor = db.Column(db.String(30))
     medidas = db.Column(db.Integer)
     marca = db.Column(db.String(80))
-    preco_custo = db.Column(db.Integer)
-    preco_venda = db.Column(db.Integer)
+    preco_custo = db.Column(db.Float)
+    preco_venda = db.Column(db.Float)
+    preco_final = db.Column(db.Float)
     foto = db.Column(db.LargeBinary)
     vendido = db.Column(db.Boolean, default=False)
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
 
     vendas = db.relationship('Venda', secondary=produtos_vendas, back_populates='produtos')
 
-    def __init__(self, descricao, categoria, sub_categoria, tamanho, cor, medidas, marca, preco_custo, preco_venda, foto):
+    def __init__(self, descricao, categoria, sub_categoria, tamanho, cor, medidas, marca, preco_custo, preco_venda, preco_final, foto):
         self.descricao = descricao
         self.categoria = categoria
         self.sub_categoria = sub_categoria
@@ -86,6 +87,7 @@ class Produto(db.Model):
         self.marca = marca
         self.preco_custo = preco_custo
         self.preco_venda = preco_venda
+        self.preco_final = preco_final
         self.foto = foto
 
     def __repr__(self):

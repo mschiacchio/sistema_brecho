@@ -96,7 +96,7 @@
                 </div>
                 <!--Preço de custo-->
                 <div class="input-container">
-                    <input type="text" name="preco_custo" value="{{ produtos.preco_custo}}" class="input-field formatar-reais">
+                    <input type="text" name="preco_custo" value="{% if produtos.preco_custo is not none %}{{ produtos.preco_custo }}{% endif %}" class="input-field formatar-reais">
                     <label for="preco_custo" class="input-label">Preço de custo</label>
                 </div>
                 <!--Preço de venda-->
@@ -104,6 +104,11 @@
                     <input type="text" name="preco_venda" value="{{ produtos.preco_venda }}" class="input-field formatar-reais" required>
                     <label for="preco_venda" class="input-label">Preço de venda</label>
                     <span class="required-asterisk">*</span>
+                </div>
+                <!-- Preço final -->
+                <div class="input-container">
+                    <input type="text" name="preco_final" value="{% if produtos.preco_final is not none %}{{ produtos.preco_final }}{% endif %}" class="input-field formatar-reais">
+                    <label for="preco_final" class="input-label">Preço final</label>
                 </div>
                 <!--Foto-->
                 <div class="input-container">

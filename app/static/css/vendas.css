@@ -140,7 +140,7 @@ body{
 }
 .input-container select {
     width: 100%; /* Preenche a largura do container pai */
-    max-width: 390px; /* Largura máxima para evitar que fique muito largo */
+    max-width: 54%; /* Largura máxima para evitar que fique muito largo */
 }
 .input-field {
     width: 50%;
