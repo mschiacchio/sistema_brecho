@@ -84,7 +84,7 @@ def fornecedor_existe(id_fornecedor):
 
 @login_required
 @app.route("/comprascadastro", methods=['GET', 'POST'])
-def compras_cadastro():
+def comprascadastro():
     session.pop('success', None)
     session.pop('error', None)    
 
@@ -92,15 +92,20 @@ def compras_cadastro():
         id_fornecedor = request.form.get('id_fornecedor')
         qtd_pecas = request.form.get('qtd_pecas')
         lote = request.form.get('lote')
-        val_total_pg_str = request.form.get('val_total_pg')
-        val_total_pg_str = val_total_pg_str.replace('R$', '').replace(',', '.')
+        val_total_pg_str = request.form.get('val_total')
         dta_compra = datetime.strptime(request.form.get('dta_compra'), '%Y-%m-%d').date()
 
-        try:
-            val_total_pg = float(val_total_pg_str)
-        except ValueError:
-            # Trate erros de conversão, se necessário
-            val_total_pg = ''
+        if val_total_pg_str is not None:
+            val_total_pg_str = val_total_pg_str.replace('R$', '').replace(',', '.')
+            
+            try:
+                val_total_pg = float(val_total_pg_str)
+            except ValueError:
+                # Trate erros de conversão, se necessário
+                val_total_pg = None
+        else:
+            # Trate o caso em que val_total_pg_str é None
+            val_total_pg = None
 
 
         if id_fornecedor and qtd_pecas and val_total_pg and lote and dta_compra:

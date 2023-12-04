@@ -5,7 +5,7 @@
     <title>Sistema de brechó</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/compras.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <script src="/app/static/js/comprascadastro.js"></script>
+    <script src="/static/js/comprascadastro.js"></script>
 
 </head>
 <body>
@@ -41,7 +41,7 @@
             {% endif %}
     {% endwith %}
     <div id="container-login" class="compras-section">
-        <form action="{{ url_for('compras_cadastro')}}" method="POST">
+        <form action="{{ url_for('comprascadastro')}}" method="POST">
             <section id="compras">
                 <!--ID do Fornecedor-->
                 <div class="input-container">
