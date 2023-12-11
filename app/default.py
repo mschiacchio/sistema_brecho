@@ -326,7 +326,7 @@ def vendas_cadastro():
             flash('Erro ao cadastrar as vendas', 'error')
 
 
-    return render_template("vendascadastro.html")
+    return render_template("vendascadastro.html", produtos=produtos)
 
 from sqlalchemy.orm import clear_mappers
 

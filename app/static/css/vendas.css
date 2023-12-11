@@ -149,6 +149,10 @@ body{
     border-radius: 7px;
     font-size: 16px;
 }
+.modal {
+    padding: 10px;
+    font-size: 14px;
+}
 .input-label {
     position: absolute;
     top: 20%;
@@ -231,4 +235,36 @@ a{
     border: none;
     cursor: pointer;
     font-size: 16px;
+}
+
+#editarProdutoModal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1001; /* Garanta que o modal esteja acima do elemento desfocado */
+    pointer-events: auto;
+    width: 30%;
+    height: 90%;
+}
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Cor de fundo com transparência */
+    backdrop-filter: blur(5px); /* Aplica o desfoque ao fundo */
+    z-index: 1000; /* Z-index menor que o modal para que o modal ainda esteja acima */
+}
+.close{
+    position: absolute;
+    top: 0px;
+    right: 10px;
 }

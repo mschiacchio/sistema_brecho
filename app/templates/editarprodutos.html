@@ -21,6 +21,7 @@
         <a href="/home"><i class="fas fa-home icone-casa"></i></a>
         <a href="/compras">Compras</a>
         <a href="/vendas">Vendas</a>
+        <a href="/produtos">Produtos</a>
         <a href="/fornecedores">Fornecedores</a>
         <a href="/clientes">Clientes</a>
     </div>
@@ -96,18 +97,18 @@
                 </div>
                 <!--Preço de custo-->
                 <div class="input-container">
-                    <input type="text" name="preco_custo" value="{% if produtos.preco_custo is not none %}{{ produtos.preco_custo }}{% endif %}" class="input-field formatar-reais">
+                    <input type="text" name="preco_custo" value="{% if produtos.preco_custo is not none %}R${{ produtos.preco_custo }}{% endif %}" class="input-field formatar-reais">
                     <label for="preco_custo" class="input-label">Preço de custo</label>
                 </div>
                 <!--Preço de venda-->
                 <div class="input-container">
-                    <input type="text" name="preco_venda" value="{{ produtos.preco_venda }}" class="input-field formatar-reais" required>
+                    <input type="text" name="preco_venda" value="R${{ produtos.preco_venda }}" class="input-field formatar-reais" required>
                     <label for="preco_venda" class="input-label">Preço de venda</label>
                     <span class="required-asterisk">*</span>
                 </div>
                 <!-- Preço final -->
                 <div class="input-container">
-                    <input type="text" name="preco_final" value="{% if produtos.preco_final is not none %}{{ produtos.preco_final }}{% endif %}" class="input-field formatar-reais">
+                    <input type="text" name="preco_final" value="R${% if produtos.preco_final is not none %}{{ produtos.preco_final }}{% endif %}" class="input-field formatar-reais">
                     <label for="preco_final" class="input-label">Preço final</label>
                 </div>
                 <!--Foto-->

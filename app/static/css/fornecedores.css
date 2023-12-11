@@ -99,17 +99,18 @@ body{
     border-radius: 5px;
     margin-bottom: 10px;
 }
-.fornecedores-section{ 
-    background-color:#d6d4d4;
-    line-height: 1.5;
-    text-align: center;
+.fornecedores-section {
+    background-color: #d6d4d4;
     border-radius: 20px;
-    width: 30%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative; /* Altere para position: relative */
     box-shadow: 2px 5px 5px grey;
+    width: 30%;
+    margin: 0 auto; /* Centralize horizontalmente */
+    text-align: center; /* Centralize o conteúdo horizontalmente */
+    display: flex; /* Centralize verticalmente */
+    flex-direction: column; /* Centralize verticalmente */
+    align-items: center; /* Centralize verticalmente */
+    justify-content: center; /* Centralize verticalmente */
 }
 .input-container {
     position: relative;
