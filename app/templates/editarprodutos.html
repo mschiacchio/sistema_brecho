@@ -43,7 +43,7 @@
             {% endif %}
     {% endwith %}
     <div id="container-login" class="produtos-section">
-        <form action="{{ url_for('editar_produtos', id=produtos.id) }}" method="POST">
+        <form id="formEditarProduto" action="{{ url_for('editar_produtos', id=produtos[0].id) }}" method="POST">
             <section id="produtos">
                 <!--Descrição-->
                 <div class="input-container">

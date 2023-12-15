@@ -282,6 +282,8 @@ def vendas_cadastro():
     session.pop('success', None)
     session.pop('error', None)    
 
+    produtos = Produto.query.filter_by(id_usuario=current_user.id).all()
+
     if request.method == 'POST':
         ids_produtos = request.form.getlist('id_produto[]')
         desconto = request.form.get('desconto')
@@ -315,6 +317,9 @@ def vendas_cadastro():
 
                     if produto and not produto.vendido:
                         produto.vendido = True
+                        preco_final_produto = request.form.get(f'preco_final{id_produto}')
+                        if preco_final_produto is not None:
+                            produto.preco_final = float(preco_final_produto.replace('R$', '').replace(',', '.'))
                         nova_venda.produtos.append(produto)
 
                 db.session.commit()
@@ -328,7 +333,6 @@ def vendas_cadastro():
 
     return render_template("vendascadastro.html", produtos=produtos)
 
-from sqlalchemy.orm import clear_mappers
 
 @login_required
 @app.route("/excluirvendas/<int:id>", methods=['GET'])
@@ -438,9 +442,9 @@ def produtos_cadastro():
 @app.route("/editarprodutos/<int:id>", methods=['GET', 'POST'])
 def editar_produtos(id):
     origem = request.args.get('origem')  # Obtém o valor do parâmetro 'origem' da URL
-    produtos = Produto.query.filter_by(id=id, id_usuario=current_user.id).first()
+    produto = Produto.query.filter_by(id=id, id_usuario=current_user.id).first()
 
-    if produtos is None:
+    if produto is None:
         return jsonify({"error": "Produto não encontrado"}), 404
     
     if request.method == "POST":
@@ -545,8 +549,19 @@ def get_product_info():
     
 def format_currency(value):
     if value is not None:
+        if isinstance(value, str):
+            # Se 'value' for uma string, tente convertê-la para um número
+            try:
+                value = float(value.replace('R$', '').replace('.', '').replace(',', '.'))
+            except ValueError:
+                # Se a conversão falhar, retorne None ou trate de outra forma, dependendo da lógica do seu aplicativo
+                return None
+
         return 'R${:,.2f}'.format(value).replace(',', ';').replace('.', ',').replace(';', '.')
+
     return None
+
+
 @login_required
 @app.route("/clientes", methods=['GET', 'POST'])
 def clientes():

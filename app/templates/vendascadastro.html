@@ -84,7 +84,7 @@
                 <!--Valor total-->
                 <div class="input-container">
                     <input type="text" name="valor" id="valor" class="input-field formatar-reais">
-                    <label for="valor" class="input-label">Valor total da compra</label>
+                    <label for="valor" class="input-label">Valor total da venda</label>
                     
                 </div>
                 <!--Desconto-->
@@ -156,7 +156,7 @@
                         <button type="button" class="button_adc close" id="fecharModal">X</button>
                     </div>
                     <div class="modal-body">
-                        <form id="formEditarProduto" action="{{ url_for('editar_produtos', id=produtos.id) }}" method="POST">
+                        <form id="formEditarProduto" action="{{ url_for('editar_produtos', id=produtos[0].id) }}" method="POST">
                             <!--Descrição-->
                             <div class="input-container">
                                 <input type="text" name="descricao" value="{{ produtos.descricao }}" class="input-field modal" required>
@@ -219,7 +219,7 @@
                             </div>
                             <!-- Preço final -->
                             <div class="input-container">
-                                <input type="text" name="preco_final" value="R${% if produtos.preco_final is not none %}{{ produtos.preco_final }}{% endif %}" class="input-field modal formatar-reais">
+                                <input type="text" name="preco_final" value="{% if produtos.preco_final is not none %}{{ produtos.preco_final }}{% else %}{{ produtos.preco_venda }}{% endif %}" class="input-field modal formatar-reais">
                                 <label for="preco_final" class="input-label">Preço final</label>
                             </div>
                             <!--Foto-->
