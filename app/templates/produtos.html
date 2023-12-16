@@ -77,17 +77,17 @@
                 <td>{{ produto.marca }}</td>
                 <td>
                     {% if produto.preco_custo is not none %}
-                        {{ formatar_preco(produto.preco_custo) }}
+                        {{ format_currency(produto.preco_custo) }}
                     {% endif %}
                 </td>
                 <td>
                     {% if produto.preco_venda is not none %}
-                        {{ formatar_preco(produto.preco_venda) }}
+                        {{ format_currency(produto.preco_venda) }}
                     {% endif %}
                 </td>
                 <td>
                     {% if produto.preco_final is not none %}
-                        {{ formatar_preco(produto.preco_final) }}
+                        {{ format_currency(produto.preco_final) }}
                     {% endif %}
                 </td>                
                 <td>

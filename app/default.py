@@ -270,7 +270,7 @@ def editar_fornecedores(id):
 @app.route("/vendas", methods=['GET', 'POST'])
 def vendas():
     vendas = Venda.query.filter_by(id_usuario=current_user.id).all()
-    return render_template("vendas.html", vendas=vendas, formatar_preco=formatar_preco)
+    return render_template("vendas.html", vendas=vendas, format_currency=format_currency)
 
 def produto_existe(id_produto):
     produto = Produto.query.get(id_produto)
@@ -308,7 +308,9 @@ def vendas_cadastro():
 
         try:
             db.session.add(nova_venda)
-            db.session.flush()  # Obtenha o ID da nova venda
+            db.session.commit()  # Commitar a nova venda antes de obter o ID
+
+            # Obter o ID da nova venda após o commit
             nova_venda_id = nova_venda.id
 
             if ids_produtos:
@@ -318,15 +320,21 @@ def vendas_cadastro():
                     if produto and not produto.vendido:
                         produto.vendido = True
                         preco_final_produto = request.form.get(f'preco_final{id_produto}')
+                        print(f'1 Produto ID: {id_produto}, Preço Final do Produto: {preco_final_produto}')
+
+
                         if preco_final_produto is not None:
+                            print(f'Produto ID: {id_produto}, Preço Final do Produto: {preco_final_produto}')
                             produto.preco_final = float(preco_final_produto.replace('R$', '').replace(',', '.'))
+
                         nova_venda.produtos.append(produto)
 
                 db.session.commit()
                 flash('Cadastro da venda realizado com sucesso!', 'success')
             else:
                 flash('Não há produtos', 'info')
-        except IntegrityError:
+        except Exception as e:
+            print(f'Erro ao cadastrar as vendas: {e}')
             db.session.rollback()
             flash('Erro ao cadastrar as vendas', 'error')
 
@@ -365,12 +373,7 @@ def excluir_vendas(id):
 @app.route("/produtos", methods=['GET', 'POST'])
 def produtos():
     produtos = Produto.query.filter_by(id_usuario=current_user.id).all()
-    return render_template("produtos.html", produtos=produtos, formatar_preco=formatar_preco)
-
-def formatar_preco(valor):
-    if valor is not None:
-        return 'R${:,.2f}'.format(valor).replace(',', ';').replace('.', ',').replace(';', '.')
-    return None
+    return render_template("produtos.html", produtos=produtos, format_currency=format_currency)
 
 @login_required
 @app.route("/produtoscadastro", methods=['GET', 'POST'])
@@ -441,10 +444,9 @@ def produtos_cadastro():
 @login_required
 @app.route("/editarprodutos/<int:id>", methods=['GET', 'POST'])
 def editar_produtos(id):
-    origem = request.args.get('origem')  # Obtém o valor do parâmetro 'origem' da URL
-    produto = Produto.query.filter_by(id=id, id_usuario=current_user.id).first()
+    produtos = Produto.query.filter_by(id=id, id_usuario=current_user.id).first()
 
-    if produto is None:
+    if produtos is None:
         return jsonify({"error": "Produto não encontrado"}), 404
     
     if request.method == "POST":
@@ -509,12 +511,7 @@ def editar_produtos(id):
             try:
                 db.session.commit()
                 flash('Produto editado com sucesso!', 'success')
-                print(f'Origem da edição: {origem}')
-                # Verifica a origem da edição e redireciona para a página apropriada
-                if origem == 'vendascadastro':
-                    return redirect(url_for('vendascadastro'))  # Substitua 'pagina_de_vendas' pelo nome da sua rota de vendas
-                else:
-                    return redirect(url_for('produtos'))
+
             except Exception as e:
                 print(f'Erro durante a edição', e)
                 db.session.rollback()
@@ -524,6 +521,84 @@ def editar_produtos(id):
         
     return render_template("editarprodutos.html", produtos=produtos)
 
+@login_required
+@app.route("/editarprodutosnavenda/<int:id>", methods=['GET', 'POST'])
+def editar_produtos_pagvenda(id):
+    produto = Produto.query.filter_by(id=id, id_usuario=current_user.id).first()
+
+    if produto is None:
+        return jsonify({"error": "Produto não encontrado"}), 404
+    
+    if request.method == "POST":
+        descricao = request.form.get('descricao')
+        categoria = request.form.get('categoria')
+        sub_categoria = request.form.get('sub_categoria')
+        tamanho = request.form.get('tamanho')
+        cor = request.form.get('cor')
+        medidas = request.form.get('medidas')
+        marca = request.form.get('marca')
+        preco_custo = request.form.get('preco_custo')
+        preco_venda = request.form.get('preco_venda')
+        preco_final = request.form.get('preco_final')
+        foto = request.files.get('foto')
+        if foto:
+            foto_data = foto.read()
+        else:
+            foto_data = None
+        vendido = request.form.get('vendido')
+
+        if not sub_categoria:
+            sub_categoria = ""
+        if not cor:
+            cor = ""
+        if not medidas:
+            medidas = ""
+        if not marca:
+            marca = ""
+        if not preco_custo:
+            preco_custo = None
+        if not foto_data:
+            foto_data = ""
+        if not preco_final:
+            preco_final = ""
+
+
+        if descricao and categoria and tamanho and preco_venda:
+        
+            produto.descricao = descricao
+            produto.categoria = categoria
+            produto.sub_categoria = sub_categoria
+            produto.tamanho = tamanho
+            produto.cor = cor
+            produto.medidas = medidas
+            produto.marca = marca
+            
+            if not preco_custo:
+                produto.preco_custo = None
+            else:
+                produto.preco_custo = float(preco_custo.replace('R$', '').replace(',', '.'))
+
+            produto.preco_venda = float(preco_venda.replace('R$', '').replace(',', '.'))
+
+            if preco_final is not None:
+                produto.preco_final = float(preco_final.replace('R$', '').replace(',', '.'))
+            else:
+                produto.preco_final = None
+
+            produto.foto = foto
+            produto.vendido = vendido
+
+            try:
+                db.session.commit()
+                flash('Produto editado com sucesso!', 'success')
+            except Exception as e:
+                print(f'Erro durante a edição', e)
+                db.session.rollback()
+                flash('Erro ao editar o produto', 'error')
+        else:
+            flash('Algum item do produto não foi encontrado', 'error')
+
+    return render_template('vendascadastro.html', produtos=produtos)
 
 @app.route('/get_product_info', methods=['GET'])
 def get_product_info():
@@ -557,7 +632,7 @@ def format_currency(value):
                 # Se a conversão falhar, retorne None ou trate de outra forma, dependendo da lógica do seu aplicativo
                 return None
 
-        return 'R${:,.2f}'.format(value).replace(',', ';').replace('.', ',').replace(';', '.')
+        return f'R${value:,.2f}'.replace(',', ';').replace('.', ',').replace(';', '.')
 
     return None
 
