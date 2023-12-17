@@ -106,11 +106,6 @@
                     <label for="preco_venda" class="input-label">Preço de venda</label>
                     <span class="required-asterisk">*</span>
                 </div>
-                <!-- Preço final -->
-                <div class="input-container">
-                    <input type="text" name="preco_final" value="R${% if produtos.preco_final is not none %}{{ produtos.preco_final }}{% endif %}" class="input-field formatar-reais">
-                    <label for="preco_final" class="input-label">Preço final</label>
-                </div>
                 <!--Foto-->
                 <div class="input-container">
                     <input type="file" name="foto" value="{{ produtos.foto }}" class="input-field" accept="image/*">

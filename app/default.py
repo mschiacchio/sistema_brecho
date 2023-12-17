@@ -341,6 +341,59 @@ def vendas_cadastro():
 
     return render_template("vendascadastro.html", produtos=produtos)
 
+@app.route("/editarvendas/<int:id>", methods=['GET', 'POST'])
+def editar_venda(id):
+    session.pop('success', None)
+    session.pop('error', None)
+
+    # Obter a venda a ser editada
+    venda = Venda.query.filter_by(id=id, id_usuario=current_user.id).first()
+
+    if not venda:
+        flash('Venda não encontrada ou não autorizada para edição', 'error')
+        return redirect(url_for('vendas_cadastro'))
+
+    produtos = Produto.query.filter_by(id_usuario=current_user.id).all()
+
+    if request.method == 'POST':
+        # Lógica para editar a venda
+
+        try:
+            # Atualize os campos da venda conforme necessário
+            venda.desconto = request.form.get('desconto')
+            val_total_str = request.form.get('val_total')  # Correção aqui
+            venda.val_total = float(val_total_str.replace('R$', '').replace(',', '.'))
+            venda.forma_pagamento = request.form.get('forma_pagamento')
+            venda.tipo_venda = request.form.get('tipo_venda')
+            venda.dta_venda = datetime.strptime(request.form.get('dta_venda'), '%Y-%m-%d').date()
+            venda.nome_cliente = request.form.get('nome_cliente')
+
+            # Atualize a lista de produtos da venda
+            venda.produtos = []
+
+            ids_produtos = request.form.getlist('id_produto[]')
+            for id_produto in ids_produtos:
+                produto = Produto.query.get(id_produto)
+
+                if produto and not produto.vendido:
+                    produto.vendido = True
+                    preco_final_produto = request.form.get(f'preco_final{id_produto}')
+
+                    if preco_final_produto is not None:
+                        produto.preco_final = float(preco_final_produto.replace('R$', '').replace(',', '.'))
+
+                    venda.produtos.append(produto)
+
+            db.session.commit()
+            flash('Venda editada com sucesso!', 'success')
+            return redirect(url_for('vendas_cadastro'))
+        except Exception as e:
+            print(f'Erro ao editar a venda: {e}')
+            db.session.rollback()
+            flash('Erro ao editar a venda', 'error')
+
+    return render_template("editarvendas.html", venda=venda, produtos=produtos)
+
 
 @login_required
 @app.route("/excluirvendas/<int:id>", methods=['GET'])
@@ -352,6 +405,7 @@ def excluir_vendas(id):
         for produto in venda.produtos:
             produto.vendido = False
             produto.id_venda = None
+            produto.preco_final = None
 
         # Excluir a venda e commit manualmente
         db.session.delete(venda)
@@ -459,7 +513,6 @@ def editar_produtos(id):
         marca = request.form.get('marca')
         preco_custo = request.form.get('preco_custo')
         preco_venda = request.form.get('preco_venda')
-        preco_final = request.form.get('preco_final')
         foto = request.files.get('foto')
         if foto:
             foto_data = foto.read()
@@ -479,9 +532,6 @@ def editar_produtos(id):
             preco_custo = None
         if not foto_data:
             foto_data = ""
-        if not preco_final:
-            preco_final = ""
-
 
         if descricao and categoria and tamanho and preco_venda:
         
@@ -499,12 +549,6 @@ def editar_produtos(id):
                 produtos.preco_custo = float(preco_custo.replace('R$', '').replace(',', '.'))
 
             produtos.preco_venda = float(preco_venda.replace('R$', '').replace(',', '.'))
-
-            if preco_final is not None:
-                produtos.preco_final = float(preco_final.replace('R$', '').replace(',', '.'))
-            else:
-                produtos.preco_final = None
-
             produtos.foto = foto
             produtos.vendido = vendido
 
