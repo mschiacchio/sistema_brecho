@@ -396,6 +396,31 @@ def editar_venda(id):
 
 
 @login_required
+@app.route('/api/produtos_por_venda/<int:venda_id>', methods=['GET'])
+def produtos_por_venda(venda_id):
+    venda = Venda.query.filter_by(id=venda_id, id_usuario=current_user.id).first()
+
+    if not venda:
+        return jsonify({'error': 'Venda não encontrada ou não autorizada para acesso'}), 404
+
+    produtos = [
+        {
+            'id': produto.id,
+            'descricao': produto.descricao,
+            'categoria': produto.categoria,
+            'tamanho': produto.tamanho,
+            'cor': produto.cor,
+            'marca': produto.marca,
+            'preco_venda': produto.preco_venda,
+            'preco_final': produto.preco_final,
+            'foto': produto.foto
+        }
+        for produto in venda.produtos
+    ]
+
+    return jsonify({'produtos': produtos})
+
+@login_required
 @app.route("/excluirvendas/<int:id>", methods=['GET'])
 def excluir_vendas(id):
     try:
