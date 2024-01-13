@@ -286,6 +286,7 @@ def vendas_cadastro():
 
     if request.method == 'POST':
         ids_produtos = request.form.getlist('id_produto[]')
+        tipo_desconto = request.form.get('tipo_desconto')
         desconto = request.form.get('desconto')
         val_total_str = request.form.get('val_total')
         val_total_str = val_total_str.replace('R$', '').replace(',', '.')
@@ -303,7 +304,7 @@ def vendas_cadastro():
         if not nome_cliente:
             nome_cliente = ""
 
-        nova_venda = Venda(desconto=desconto, val_total=val_total, forma_pagamento=forma_pagamento, tipo_venda=tipo_venda, dta_venda=dta_venda, nome_cliente=nome_cliente)
+        nova_venda = Venda(tipo_desconto=tipo_desconto, desconto=desconto, val_total=val_total, forma_pagamento=forma_pagamento, tipo_venda=tipo_venda, dta_venda=dta_venda, nome_cliente=nome_cliente)
         nova_venda.id_usuario = current_user.id
 
         try:
@@ -386,7 +387,7 @@ def editar_venda(id):
 
             db.session.commit()
             flash('Venda editada com sucesso!', 'success')
-            return redirect(url_for('vendas_cadastro'))
+            return redirect(url_for('vendas'))
         except Exception as e:
             print(f'Erro ao editar a venda: {e}')
             db.session.rollback()
@@ -394,6 +395,23 @@ def editar_venda(id):
 
     return render_template("editarvendas.html", venda=venda, produtos=produtos)
 
+@login_required
+@app.route('/atualizar_status_produto/<int:produto_id>', methods=['POST'])
+def atualizar_status_produto(produto_id):
+    # Receber o novo status do produto do corpo da solicitação
+    novo_status = request.json.get('status')
+
+    # Implementar lógica para atualizar o status do produto no seu banco de dados
+    # Exemplo: Atualizar o campo 'vendido' para True
+    # Substitua esta lógica pela forma como você atualiza o estado do produto em seu sistema
+    produto = Produto.query.get(produto_id)
+    if produto:
+        produto.vendido = False  # Supondo que 'vendido' é o campo que indica se o produto foi vendido
+        db.session.commit()
+
+        return jsonify({'message': 'Status do produto atualizado com sucesso!'}), 200
+    else:
+        return jsonify({'error': 'Produto não encontrado'}), 404
 
 @login_required
 @app.route('/api/produtos_por_venda/<int:venda_id>', methods=['GET'])
@@ -789,3 +807,27 @@ def excluir_clientes(id):
         print(f'Erro durante a exclusão do cliente: {str(e)}')
 
     return render_template('clientes.html')
+
+@login_required
+@app.route("/excluirprodutos/<int:id>", methods=['GET'])
+def excluir_produtos(id):
+    produtos = Produto.query.filter_by(id=id, id_usuario=current_user.id).first()
+
+    if produtos is None:
+        return jsonify({"error": "Produto não encontrado"}), 404
+    
+    if produtos.vendido:
+        flash('Este produto não pode ser excluído pois está marcado como vendido. Exclua-o da venda primeiro', 'error')
+        return redirect(url_for("produtos"))
+
+    try:
+        db.session.delete(produtos)
+        db.session.commit()
+        flash('Produto excluído com sucesso!', 'success')
+        return redirect(url_for("produtos"))
+    except Exception as e:
+        db.session.rollback()
+        flash('Erro ao excluir produto', 'error')
+        print(f'Erro durante a exclusão do produto: {str(e)}')
+
+    return render_template('produtos.html')

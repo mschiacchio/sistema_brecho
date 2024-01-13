@@ -49,8 +49,30 @@
     {% endwith %}
     {% block content %}
     <div id="container-login" class="container-vendas">
+        {% if tabela_produtos_vazia %}
+            <script>
+                $(document).ready(function() {
+                    // Adicione o código JS aqui para exibir a confirmação e excluir a venda se necessário
+                    if (confirm('A tabela de produtos está vazia. Tem certeza que deseja excluir a venda?')) {
+                        // Se o usuário confirmar, você pode adicionar código JS para enviar o formulário
+                        document.getElementById('formEditarVenda').submit();
+                    }
+                });
+            </script>
+        {% endif %}
         <form id="formEditarVenda" action="{{ url_for('editar_venda', id=venda.id)}}" method="POST">
             <section id="vendas" class="section-vendas">
+                <div id="produtos-container">
+                    <div class="campo-produto">
+                        <!--ID do Produto-->
+                        <div class="input-container">
+                            <input type="number" name="id_produto[]" id="id_produto" class="input-field">
+                            <label for="id_produto" class="input-label">ID Produto</label>
+                            <span class="required-asterisk">*</span>
+                        </div>
+                        <button type="button" class="button_adc" onclick="adicionarProduto()"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg></button>
+                    </div>
+                </div>
                 <br>
                 <table id="tabelaProdutos" class="tabela-cadastro" border="2">
                     <thead>
@@ -64,6 +86,7 @@
                             <th>Preço de venda</th>
                             <th>Preço final</th>
                             <th>Foto</th>
+                            <th>Excluir</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,8 +97,8 @@
                 <div class="input-container">
                     <label for="desconto">Tipo de Desconto:</label>
                     <br>
-                    <input type="radio" id="tipo_desconto" name="tipo_desconto_porcentagem" value="Porcentagem" {% if venda.tipo_desconto == 'Porcentagem' %}checked{% endif %} required> Porcentagem
-                    <input type="radio" id="tipo_desconto" name="tipo_desconto_valor" value="Valor" {% if venda.tipo_desconto == 'Valor' %}checked{% endif %} required> Valor
+                    <input type="radio" id="tipo_desconto_porcentagem" name="tipo_desconto" value="Porcentagem" {% if venda.tipo_desconto == 'Porcentagem' %}checked{% endif %}> Porcentagem
+                    <input type="radio" id="tipo_desconto_valor" name="tipo_desconto" value="Valor" {% if venda.tipo_desconto == 'Valor' %}checked{% endif %}> Valor
                 </div>
 
                 <div class="input-container">
@@ -125,96 +148,7 @@
                     <input type="submit" class="button" value="CADASTRAR"id="btnCadastrar"></input>
                 </div>
             </section>
-        </form>
-        <div class="overlay" id="overlay"></div>
-        <!-- Modal de Edição de Produto -->
-        <div id="editarProdutoModal" class="modal">
-            <div id="modal-dialog" class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Editar Produto</h5>
-                        <button type="button" class="button_adc close" id="fecharModal">X</button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formEditarProduto" action="" method="POST">
-                            <!--Descrição-->
-                            <div class="input-container">
-                                <input type="text" name="descricao" value="{{ produtos.descricao }}" class="input-field modal" required>
-                                <label for="descricao" class="input-label">Descrição</label>
-                                <span class="required-asterisk">*</span>
-                            </div>
-                            <!--Categoria-->
-                            <div class="input-container">
-                                <select name="categoria" id="categoria" class="input-field modal">
-                                    <option value="" selected disabled>Selecione a categoria</option>
-                                    <option value="Blusa" {% if produtos.categoria == 'Blusa' %}selected{% endif %}>Blusa</option>
-                                    <option value="Regata" {% if produtos.categoria == 'Regata' %}selected{% endif %}>Regata</option>
-                                    <option value="Saia" {% if produtos.categoria == 'Saia' %}selected{% endif %}>Saia</option>
-                                    <option value="Calca" {% if produtos.categoria == 'Calca' %}selected{% endif %}>Calça</option>
-                                    <option value="Short" {% if produtos.categoria == 'Short' %}selected{% endif %}>Short</option>
-                                    <option value="Bermuda" {% if produtos.categoria == 'Bermuda' %}selected{% endif %}>Bermuda</option>
-                                    <option value="Vestido" {% if produtos.categoria == 'Vestido' %}selected{% endif %}>Vestido</option>
-                                    <option value="Academia" {% if produtos.categoria == 'Academia' %}selected{% endif %}>Academia</option>
-                                    <option value="Macacao" {% if produtos.categoria == 'Macacao' %}selected{% endif %}>Macacão</option>
-                                    <option value="Vestido_festa" {% if produtos.categoria == 'Vestido_festa' %}selected{% endif %}>Vestido de festa</option>
-                                </select>
-                                <span class="required-asterisk">*</span>
-                            </div>
-                            <!--Sub-categoria-->
-                            <div class="input-container">
-                                <input type="text" name="sub_categoria" value="{{ produtos.sub_categoria }}" class="input-field modal">
-                                <label for="sub_categoria" class="input-label">Sub-categoria</label>
-                            </div>
-                            <!--Tamanho-->
-                            <div class="input-container">
-                                <input type="text" name="tamanho" value="{{ produtos.tamanho }}" class="input-field modal" required>
-                                <label for="tamanho" class="input-label">Tamanho</label>
-                                <span class="required-asterisk">*</span>
-                            </div>
-                            <!--Cor-->
-                            <div class="input-container">
-                                <input type="text" name="cor" value="{{ produtos.cor }}" class="input-field modal">
-                                <label for="cor" class="input-label">Cor</label>
-                            </div>
-                            <!--Medidas-->
-                            <div class="input-container">
-                                <input type="number" name="medidas" value="{{ produtos.medidas }}" class="input-field modal">
-                                <label for="medidas" class="input-label">Medidas</label>
-                            </div>
-                            <!--Marca-->
-                            <div class="input-container">
-                                <input type="text" name="marca" value="{{ produtos.marca }}" class="input-field modal">
-                                <label for="marca" class="input-label">Marca</label>
-                            </div>
-                            <!--Preço de custo-->
-                            <div class="input-container">
-                                <input type="text" name="preco_custo" value="{% if produtos.preco_custo is not none %}R${{ produtos.preco_custo }}{% endif %}" class="input-field modal formatar-reais">
-                                <label for="preco_custo" class="input-label">Preço de custo</label>
-                            </div>
-                            <!--Preço de venda-->
-                            <div class="input-container">
-                                <input type="text" name="preco_venda" value="R${{ produtos.preco_venda }}" class="input-field modal formatar-reais" required>
-                                <label for="preco_venda" class="input-label">Preço de venda</label>
-                                <span class="required-asterisk">*</span>
-                            </div>
-                            <!-- Preço final -->
-                            <div class="input-container">
-                                <input type="text" name="preco_final" value="{% if produtos.preco_final is not none %}{{ produtos.preco_final }}{% else %}{{ produtos.preco_venda }}{% endif %}" class="input-field modal formatar-reais">
-                                <label for="preco_final" class="input-label">Preço final</label>
-                            </div>
-                            <!--Foto-->
-                            <div class="input-container">
-                                <input type="file" name="foto" value="{{ produtos.foto }}" class="input-field modal" accept="image/*">
-                                <label for="foto" class="input-label">Foto</label>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="button btn btn-primary" id="salvarEdicaoProduto">Salvar Alterações</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </form>  
     </div>
     {% endblock %}
 </body>

@@ -136,6 +136,7 @@ class Venda(db.Model):
     __tablename__ = "vendas"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    tipo_desconto = db.Column(db.String) 
     desconto = db.Column(db.Integer) 
     val_total = db.Column(db.Float)
     forma_pagamento = db.Column(db.String(50))
@@ -146,7 +147,8 @@ class Venda(db.Model):
 
     produtos = db.relationship('Produto', secondary=produtos_vendas, back_populates='vendas')
 
-    def __init__(self, desconto, val_total, forma_pagamento, tipo_venda, dta_venda, nome_cliente):
+    def __init__(self, tipo_desconto, desconto, val_total, forma_pagamento, tipo_venda, dta_venda, nome_cliente):
+        self.tipo_desconto = tipo_desconto
         self.desconto = desconto
         self.val_total = val_total
         self.forma_pagamento = forma_pagamento
