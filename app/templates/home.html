@@ -5,6 +5,8 @@
     <title>Sistema de brechó</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
 </head>
 <body>
     <div class="usuario-logado"><i class="fas fa-user"></i> {{ current_user.usuario }}</div>
@@ -21,5 +23,12 @@
         <a href="/fornecedores">Fornecedores</a>
         <a href="/clientes">Clientes</a>
     </div>
+
+    <!-- Espaço para o gráfico -->
+    <div id="grafico"></div>
+
+    <!-- Inclua o HTML do gráfico gerado pelo Plotly -->
+    {{ graph_html_vendas|safe }}
+    {{ graph_html_produtos|safe }}
 </body>
 </html>

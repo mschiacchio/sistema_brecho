@@ -59,6 +59,7 @@
                 <th>Preço final</th>
                 <th>Foto</th>
                 <th>Vendido?</th>
+                <th>Data da venda</th>
                 <th>ID da Venda</th>
                 <th>Editar</th>
                 <th>Excluir</th>
@@ -100,6 +101,13 @@
                         SIM
                     {% else %}
                         NÃO
+                    {% endif %}
+                </td>
+                <td>
+                    {% if produto.dta_venda_produto %}
+                        {{ produto.dta_venda_produto.strftime("%d/%m/%Y") }}
+                    {% else %}
+                        
                     {% endif %}
                 </td>
                 <td>

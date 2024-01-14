@@ -49,8 +49,9 @@
             <tr>
                 <th>ID Venda</th>
                 <th>ID Produto</th>
-                <th>Desconto</th>
                 <th>Valor total da venda</th>
+                <th>Desconto</th>
+                <th>Valor total pago</th>
                 <th>Forma de pagamento</th>
                 <th>Data da venda</th>
                 <th>Nome do cliente</th>
@@ -68,8 +69,26 @@
                         {{ produto.id }}
                         {% if not loop.last %}| {% endif %}
                     {% endfor %}
-                </td>                
-                <td>{{ venda.desconto }}</td>
+                </td>
+                <td>
+                    {% if venda.tipo_desconto == 'Valor' %}
+                        {{ format_currency(venda.val_total + venda.desconto) }}
+                    {% elif venda.tipo_desconto == 'Porcentagem' %}
+                        {% set valor_original = venda.val_total / (1 - venda.desconto / 100) %}
+                        {{ format_currency(valor_original) }}
+                    {% else %}
+                        {{ format_currency(venda.val_total) }}
+                    {% endif %}
+                </td>             
+                <td>
+                    {% if venda.tipo_desconto == 'Valor' %}
+                        {{ format_currency(venda.desconto) }}
+                    {% elif venda.tipo_desconto == 'Porcentagem' %}
+                        {{ venda.desconto }}%
+                    {% else %}
+                        {{ venda.desconto }}
+                    {% endif %}
+                </td>
                 <td>{{ format_currency(venda.val_total) }}</td>
                 <td>{{ venda.forma_pagamento }}</td>
                 <td>{{ venda.dta_venda.strftime("%d/%m/%Y") }}</td>

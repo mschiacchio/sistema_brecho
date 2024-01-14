@@ -1,10 +1,11 @@
 from flask import Flask, render_template, redirect, request, url_for, flash, session, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
-from datetime import datetime
+from datetime import datetime, timedelta
 from . import app, db, login_manager
 from .models.tables import Usuario, Cliente, Produto, Fornecedor, Compra, Venda
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
+import plotly.express as px
 
 
 
@@ -20,7 +21,36 @@ def load_user(id_usuario):
 @app.route("/home")
 @login_required
 def home():
-    return render_template("home.html")
+    primeiro_dia_do_mes = datetime.today().replace(day=1)
+    ultimo_dia_do_mes = primeiro_dia_do_mes.replace(month=primeiro_dia_do_mes.month + 1) - timedelta(days=1)
+    vendas_no_mes = Venda.query.filter(
+        Venda.dta_venda >= primeiro_dia_do_mes,
+        Venda.dta_venda <= ultimo_dia_do_mes).all()
+
+    # Criar um gráfico de barras com Plotly
+    fig_vendas  = px.bar(
+        x=[venda.dta_venda.day for venda in vendas_no_mes],
+        labels={'x': 'Dia', 'y': 'Quantidade de Vendas'},
+        title='Quantidade de Vendas no Mês Atual'
+    )
+
+    produtos_vendidos = Produto.query.filter(
+        Produto.dta_venda_produto >= primeiro_dia_do_mes,
+        Produto.dta_venda_produto <= ultimo_dia_do_mes
+    ).all()
+
+    # Criar um gráfico de barras com Plotly
+    fig_produtos_vendidos  = px.bar(
+        x=[produto.dta_venda_produto.day for produto in produtos_vendidos],
+        labels={'x': 'Dia', 'y': 'Quantidade'},
+        title='Quantidade de Produtos Vendidos no Mês Atual'
+    )
+
+    # Converter os gráficos para HTML
+    graph_html_vendas = fig_vendas.to_html(full_html=False)
+    graph_html_produtos = fig_produtos_vendidos.to_html(full_html=False)
+
+    return render_template("home.html", graph_html_vendas=graph_html_vendas, graph_html_produtos=graph_html_produtos)
 
 @app.route("/")
 @app.route("/login", methods=['GET', 'POST'])
@@ -320,6 +350,7 @@ def vendas_cadastro():
 
                     if produto and not produto.vendido:
                         produto.vendido = True
+                        produto.dta_venda_produto = datetime.strptime(request.form.get('dta_venda'), '%Y-%m-%d').date()
                         preco_final_produto = request.form.get(f'preco_final{id_produto}')
                         print(f'1 Produto ID: {id_produto}, Preço Final do Produto: {preco_final_produto}')
 
@@ -399,11 +430,7 @@ def editar_venda(id):
 @app.route('/atualizar_status_produto/<int:produto_id>', methods=['POST'])
 def atualizar_status_produto(produto_id):
     # Receber o novo status do produto do corpo da solicitação
-    novo_status = request.json.get('status')
 
-    # Implementar lógica para atualizar o status do produto no seu banco de dados
-    # Exemplo: Atualizar o campo 'vendido' para True
-    # Substitua esta lógica pela forma como você atualiza o estado do produto em seu sistema
     produto = Produto.query.get(produto_id)
     if produto:
         produto.vendido = False  # Supondo que 'vendido' é o campo que indica se o produto foi vendido

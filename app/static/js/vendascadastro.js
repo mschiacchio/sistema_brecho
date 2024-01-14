@@ -1,9 +1,12 @@
 // Função para formatar o campo de desconto com base no tipo selecionado
 function formatarCampoDesconto(input, tipoDesconto) {
-    var valor = input.value;
+    console.log('executando a função formatarCampoDesconto')
+    var valor = document.getElementById('desconto').value;
 
     if (tipoDesconto === 'Porcentagem') {
         valor = valor.replace(/\D/g, ''); // Remover caracteres não numéricos
+        console.log('entrou no if')
+
         if (valor.length > 0) {
             valor += '%';
         }
@@ -19,13 +22,14 @@ function formatarCampoDesconto(input, tipoDesconto) {
             valor = 'R$0,00';
         }
     }
-
-    input.value = valor;
+    document.getElementById('desconto').value = valor;
 }
 
 document.addEventListener('DOMContentLoaded', function () {
     const tipoDescontoRadios = document.querySelectorAll('input[name="tipo_desconto"]');
     const descontoInput = document.getElementById('desconto');
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById("dta_venda").setAttribute("max", today);
 
     tipoDescontoRadios.forEach(function (radio) {
         radio.addEventListener('change', function () {
@@ -63,6 +67,7 @@ camposFormatarDesconto.forEach(input => {
 });
 
 function adicionarProduto() {
+    console.log('executando a função: adicionarProduto');
     const idProdutoInput = document.getElementById("id_produto");
     const productId = idProdutoInput.value;
 
@@ -233,6 +238,7 @@ $(document).ready(function () {
 });
 // Função para calcular o valor total da compra com base nos produtos adicionados
 function calcularValorTotalCompra() {
+    console.log('executando a função: calcularValorTotalCompra');
     const tabelaCadastroVendas = $('#tabelaCadastroVendas').DataTable();
     const linhas = tabelaCadastroVendas.rows().data();
     let valorTotal = 0;
@@ -258,6 +264,7 @@ $('#tabelaCadastroVendas').on('draw.dt', calcularValorTotalCompra);
 
 // Função para calcular o valor total pago com base no valor total e desconto
 function calcularValorPago() {
+    console.log('executando a função: calcularValorPago');
     const valorTotalInput = document.getElementById("valor");
     const descontoInput = document.getElementById("desconto");
     const valorPagoInput = document.getElementById("val_total");
@@ -282,6 +289,7 @@ function calcularValorPago() {
 
 // Adicionar um ouvinte de evento de entrada para calcular o valor pago em tempo real
 document.getElementById("desconto").addEventListener("input", calcularValorPago);
+document.getElementById("desconto").addEventListener("input", formatarCampoDesconto);
 
 // Adicionar um ouvinte de evento de mudança para calcular o valor pago quando o tipo de desconto mudar
 document.querySelectorAll('input[name="tipo_desconto"]').forEach(radio => {

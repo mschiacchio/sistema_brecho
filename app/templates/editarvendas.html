@@ -49,17 +49,6 @@
     {% endwith %}
     {% block content %}
     <div id="container-login" class="container-vendas">
-        {% if tabela_produtos_vazia %}
-            <script>
-                $(document).ready(function() {
-                    // Adicione o código JS aqui para exibir a confirmação e excluir a venda se necessário
-                    if (confirm('A tabela de produtos está vazia. Tem certeza que deseja excluir a venda?')) {
-                        // Se o usuário confirmar, você pode adicionar código JS para enviar o formulário
-                        document.getElementById('formEditarVenda').submit();
-                    }
-                });
-            </script>
-        {% endif %}
         <form id="formEditarVenda" action="{{ url_for('editar_venda', id=venda.id)}}" method="POST">
             <section id="vendas" class="section-vendas">
                 <div id="produtos-container">
@@ -92,7 +81,11 @@
                     <tbody>
                     </tbody>
                 </table>
-
+                <!--Valor total-->
+                <div class="input-container">
+                    <input type="text" name="valor" id="valor" class="input-field formatar-reais">
+                    <label for="valor" class="input-label">Valor total da venda</label>
+                </div>
                 <!--Desconto-->
                 <div class="input-container">
                     <label for="desconto">Tipo de Desconto:</label>
@@ -102,13 +95,13 @@
                 </div>
 
                 <div class="input-container">
-                    <input type="number" name="desconto" value="{{ venda.desconto }}" class="input-field">
+                    <input type="number" name="desconto" value="{{ venda.desconto }}" class="input-field" id="desconto-input">
                     <label for="desconto" class="input-label" id="label-desconto">Desconto</label>
                 </div>
 
                 <!--Valor total pago-->
                 <div class="input-container">
-                    <input type="text" name="val_total" value="R${{ venda.val_total }}" class="input-field formatar-reais" required>
+                    <input type="text" name="val_total" value="{{ venda.val_total }}" class="input-field formatar-reais" required>
                     <label for="val_total" class="input-label">Valor total pago</label>
                     <span class="required-asterisk">*</span>
                 </div>
@@ -145,7 +138,7 @@
                 </div>
                 <!--Botão de cadastro-->
                 <div class="div-btn">
-                    <input type="submit" class="button" value="CADASTRAR"id="btnCadastrar"></input>
+                    <input type="submit" class="button" value="EDITAR VENDA"id="btnCadastrar"></input>
                 </div>
             </section>
         </form>  

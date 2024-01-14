@@ -73,6 +73,7 @@ class Produto(db.Model):
     preco_final = db.Column(db.Float)
     foto = db.Column(db.LargeBinary)
     vendido = db.Column(db.Boolean, default=False)
+    dta_venda_produto = db.Column(db.Date) 
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
 
     vendas = db.relationship('Venda', secondary=produtos_vendas, back_populates='produtos')
