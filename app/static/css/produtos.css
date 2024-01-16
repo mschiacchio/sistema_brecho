@@ -18,8 +18,11 @@ body{
     left: 15px;
 }
 .button{
+    margin-bottom: 20px;
     font-size: 15px;
     margin-bottom: 13px;
+    display: block;
+    margin: 0 auto;
     background-color: #e4dbd9;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -145,9 +148,13 @@ body{
 .div-btn{
     padding: 10px;
 }
+
+.tabela-container {
+    overflow-x: auto;
+}
+
 .tabela {
     border-collapse: collapse;
-    /* Combina as bordas das células */
     width: 100%;
     text-align: center;
     background-color: #c7c7c7;
