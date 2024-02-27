@@ -74,7 +74,7 @@
                     {% if venda.tipo_desconto == 'Valor' %}
                         {{ format_currency(venda.val_total + venda.desconto) }}
                     {% elif venda.tipo_desconto == 'Porcentagem' %}
-                        {% set valor_original = venda.val_total / (1 - venda.desconto / 100) %}
+                    {% set valor_original = venda.val_total | float / (1 - venda.desconto | float / 100) %}
                         {{ format_currency(valor_original) }}
                     {% else %}
                         {{ format_currency(venda.val_total) }}

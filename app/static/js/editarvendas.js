@@ -50,6 +50,8 @@ function adicionarProduto() {
 
                 document.getElementById("formEditarVenda").appendChild(secaoProduto);
             }
+            calcularValorTotalCompra();
+            calcularValorPago();
         });
 }
 $(document).ready(function() {
@@ -140,6 +142,8 @@ $(document).ready(function() {
                 tabelaProdutos.row(row).remove().draw();
             }
         }
+        calcularValorTotalCompra();
+        calcularValorPago();
     });
     $('#formEditarVenda').submit(function(event) {
         prepararEnvioFormulario();
@@ -200,24 +204,37 @@ $('#tabelaProdutos').on('draw.dt', calcularValorTotalCompra);
 function calcularValorPago() {
     console.log('executando a função: calcularValorPago');
     const valorTotalInput = document.getElementById("valor");
-    const descontoInput = document.getElementById("desconto");
-    const valorPagoInput = document.getElementById("val_total");
+    const descontoInput = document.getElementById("desconto-input");
+    let valorPagoInput = document.getElementById("val_total");
     const tipoDescontoRadios = document.querySelectorAll('input[name="tipo_desconto"]');
 
 
     const valorTotal = parseFloat(valorTotalInput.value.replace('R$', '').replace(',', '.')) || 0;
+    console.log('valorTotal: ' + valorTotal);
+
     const desconto = descontoInput.value.trim() === "" ? 0 : parseFloat(descontoInput.value) || 0;
+    console.log('desconto: ' + desconto);
 
     let valorComDesconto = valorTotal;
+    console.log('valorComDesconto: ' + valorComDesconto);
 
-    const tipoDescontoSelecionado = [...tipoDescontoRadios].find(radio => radio.checked).value;
+    const tipoDescontoSelecionadoRadio = [...tipoDescontoRadios].find(radio => radio.checked);
 
-    if (tipoDescontoSelecionado === 'porcentagem' && desconto > 0) {
-        valorComDesconto = valorTotal - (valorTotal * (desconto / 100));
-    } else if (tipoDescontoSelecionado === 'valor' && desconto > 0) {
-        valorComDesconto = valorTotal - desconto;
+    if (tipoDescontoSelecionadoRadio) {
+        const tipoDescontoSelecionado = tipoDescontoSelecionadoRadio.value;
+
+        if (tipoDescontoSelecionado === 'Porcentagem' && desconto > 0) {
+            valorComDesconto = valorTotal - (valorTotal * (desconto / 100));
+            console.log('caiu no if');
+        } else if (tipoDescontoSelecionado === 'Valor' && desconto > 0) {
+            valorComDesconto = valorTotal - desconto;
+            console.log('caiu no else if');
+        }
+    } else {
+        console.log("Nenhum desconto selecionado");
     }
-
+    
+    console.log(valorComDesconto)
     valorPagoInput.value = valorComDesconto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
