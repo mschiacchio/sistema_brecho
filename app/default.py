@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, request, url_for, flash, ses
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import datetime, timedelta
 from . import app, db, login_manager
-from .models.tables import Usuario, Cliente, Produto, Fornecedor, Compra, Venda
+from .models.tables import Usuario, Cliente, Produto, Fornecedor, Compra, Venda, produtos_vendas
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 import plotly.express as px
@@ -393,7 +393,7 @@ def editar_venda(id):
         try:
             # Atualize os campos da venda conforme necessário
             venda.desconto = request.form.get('desconto')
-            val_total_str = request.form.get('val_total')  # Correção aqui
+            val_total_str = request.form.get('val_total')
             venda.val_total = float(val_total_str.replace('R$', '').replace(',', '.'))
             venda.forma_pagamento = request.form.get('forma_pagamento')
             venda.tipo_venda = request.form.get('tipo_venda')
@@ -401,18 +401,22 @@ def editar_venda(id):
             venda.nome_cliente = request.form.get('nome_cliente')
 
             # Atualize a lista de produtos da venda
-            venda.produtos = []
 
             ids_produtos = request.form.getlist('id_produto[]')
             for id_produto in ids_produtos:
                 produto = Produto.query.get(id_produto)
 
-                if produto and not produto.vendido:
-                    produto.vendido = True
-                    preco_final_produto = request.form.get(f'preco_final{id_produto}')
+                if produto:
+                    # Verifique se o produto não foi vendido antes de atualizá-lo
+                    if not produto.vendido:
+                        produto.vendido = True
+                        preco_final_produto = request.form.get(f'preco_final{id_produto}')
 
-                    if preco_final_produto is not None:
-                        produto.preco_final = float(preco_final_produto.replace('R$', '').replace(',', '.'))
+                        if preco_final_produto is not None:
+                            produto.preco_final = float(preco_final_produto.replace('R$', '').replace(',', '.'))
+
+                    # Atualize a data de venda do produto, independentemente do seu status de venda
+                    produto.dta_venda_produto = venda.dta_venda
 
                     venda.produtos.append(produto)
 
@@ -433,12 +437,31 @@ def atualizar_status_produto(produto_id):
 
     produto = Produto.query.get(produto_id)
     if produto:
-        produto.vendido = False  # Supondo que 'vendido' é o campo que indica se o produto foi vendido
+        produto.vendido = False
+        produto.preco_final = None
+        produto.dta_venda_produto = None
         db.session.commit()
 
         return jsonify({'message': 'Status do produto atualizado com sucesso!'}), 200
     else:
         return jsonify({'error': 'Produto não encontrado'}), 404
+    
+@app.route("/remover_associacao_produto_venda/<int:produto_id>/<int:venda_id>", methods=['POST'])
+def remover_associacao_produto_venda(produto_id, venda_id):
+    try:
+        db.session.execute(
+            produtos_vendas.delete().where(
+                (produtos_vendas.c.id_produto == produto_id) & 
+                (produtos_vendas.c.id_venda == venda_id)
+            )
+        )
+        
+        db.session.commit()
+        return jsonify({'message': 'Associação produto-venda removida com sucesso.'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f'Erro ao remover associação produto-venda: {e}'}), 500
+    
 
 @login_required
 @app.route('/api/produtos_por_venda/<int:venda_id>', methods=['GET'])
@@ -476,6 +499,7 @@ def excluir_vendas(id):
             produto.vendido = False
             produto.id_venda = None
             produto.preco_final = None
+            produto.dta_venda_produto = None
 
         # Excluir a venda e commit manualmente
         db.session.delete(venda)

@@ -139,7 +139,11 @@ $(document).ready(function() {
         } else{
              if (confirm('Tem certeza que deseja remover este produto desta venda?')) {
                 atualizarStatusProduto(productId, false);
+                removerAssociacaoProdutoVenda(productId, vendaId);
                 tabelaProdutos.row(row).remove().draw();
+                alert('Produto removido da venda com sucesso!');
+                window.location.href = '/vendas';
+
             }
         }
         calcularValorTotalCompra();
@@ -170,6 +174,22 @@ function atualizarStatusProduto(productId, novoStatus) {
         },
         error: function (error) {
             console.error('Erro ao atualizar o status do produto:', error);
+        }
+    });
+}
+
+function removerAssociacaoProdutoVenda(produtoId, vendaId) {
+    console.log('Executando a função: removerAssociacaoProdutoVenda');
+    $.ajax({
+        url: `/remover_associacao_produto_venda/${produtoId}/${vendaId}`,
+        type: 'POST',
+        contentType: 'application/json',
+        success: function (response) {
+            console.log('Associação produto-venda removida com sucesso!');
+            // Adicione aqui qualquer lógica adicional para atualizar a interface do usuário, se necessário
+        },
+        error: function (error) {
+            console.error('Erro ao remover a associação produto-venda:', error);
         }
     });
 }
@@ -242,7 +262,9 @@ function calcularValorPago() {
 document.getElementById("desconto").addEventListener("input", calcularValorPago);
 
 // Adicionar um ouvinte de evento de mudança para calcular o valor pago quando o tipo de desconto mudar
+//NÃO ESTÁ FUNCIONANDO
 document.querySelectorAll('input[name="tipo_desconto"]').forEach(radio => {
+    console.log('tipo de desconto mudou')
     radio.addEventListener('change', calcularValorPago);
 });
 
