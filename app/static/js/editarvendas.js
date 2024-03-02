@@ -257,20 +257,24 @@ function calcularValorPago() {
     console.log(valorComDesconto)
     valorPagoInput.value = valorComDesconto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
-
-// Adicionar um ouvinte de evento de entrada para calcular o valor pago em tempo real
-document.getElementById("desconto").addEventListener("input", calcularValorPago);
-
-// Adicionar um ouvinte de evento de mudança para calcular o valor pago quando o tipo de desconto mudar
-//NÃO ESTÁ FUNCIONANDO
-document.querySelectorAll('input[name="tipo_desconto"]').forEach(radio => {
-    console.log('tipo de desconto mudou')
-    radio.addEventListener('change', calcularValorPago);
+$(document).ready(function() {
+    // Adicionar um ouvinte de evento de mudança para calcular o valor pago quando o tipo de desconto mudar
+    $('input[name="tipo_desconto"]').change(calcularValorPago);
+    $('input[id="desconto-input"]').change(calcularValorPago);
+    $('input[id="valor"]').change(calcularValorPago);
 });
 
+/*
+NÃO ESTÁ FUNCIONANDO
+// Adicionar um ouvinte de evento de entrada para calcular o valor pago em tempo real
+document.getElementById("desconto-input").addEventListener("input", calcularValorPago);
+// Adicionar um ouvinte de evento de mudança para calcular o valor pago quando o tipo de desconto mudar
+document.querySelectorAll('input[name="tipo_desconto"]').forEach(radio => {
+    radio.addEventListener('change', calcularValorPago);
+});
 // Adicionar um ouvinte de evento de entrada para calcular o valor pago quando o valor total mudar
 document.getElementById("valor").addEventListener("input", calcularValorPago);
-
+*/
 
 function formatarCampoReais(input) {
     console.log('executando a função: formatarCampoReais');

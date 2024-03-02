@@ -388,10 +388,9 @@ def editar_venda(id):
     produtos = Produto.query.filter_by(id_usuario=current_user.id).all()
 
     if request.method == 'POST':
-        # Lógica para editar a venda
-
         try:
             # Atualize os campos da venda conforme necessário
+            venda.tipo_desconto = request.form.get('tipo_desconto')
             venda.desconto = request.form.get('desconto')
             val_total_str = request.form.get('val_total')
             venda.val_total = float(val_total_str.replace('R$', '').replace(',', '.'))
@@ -400,24 +399,20 @@ def editar_venda(id):
             venda.dta_venda = datetime.strptime(request.form.get('dta_venda'), '%Y-%m-%d').date()
             venda.nome_cliente = request.form.get('nome_cliente')
 
-            # Atualize a lista de produtos da venda
+            # Remova todos os produtos associados à venda
+            venda.produtos.clear()
 
+            # Adicione os produtos selecionados no formulário
             ids_produtos = request.form.getlist('id_produto[]')
             for id_produto in ids_produtos:
                 produto = Produto.query.get(id_produto)
-
                 if produto:
-                    # Verifique se o produto não foi vendido antes de atualizá-lo
                     if not produto.vendido:
                         produto.vendido = True
                         preco_final_produto = request.form.get(f'preco_final{id_produto}')
-
                         if preco_final_produto is not None:
                             produto.preco_final = float(preco_final_produto.replace('R$', '').replace(',', '.'))
-
-                    # Atualize a data de venda do produto, independentemente do seu status de venda
                     produto.dta_venda_produto = venda.dta_venda
-
                     venda.produtos.append(produto)
 
             db.session.commit()
@@ -427,6 +422,7 @@ def editar_venda(id):
             print(f'Erro ao editar a venda: {e}')
             db.session.rollback()
             flash('Erro ao editar a venda', 'error')
+
 
     return render_template("editarvendas.html", venda=venda, produtos=produtos)
 
@@ -676,7 +672,7 @@ def editar_produtos_pagvenda(id):
         medidas = request.form.get('medidas')
         marca = request.form.get('marca')
         preco_custo = request.form.get('preco_custo')
-        preco_venda = request.form.get('preco_venda')
+        #preco_venda = request.form.get('preco_venda')
         preco_final = request.form.get('preco_final')
         foto = request.files.get('foto')
         if foto:
@@ -701,7 +697,7 @@ def editar_produtos_pagvenda(id):
             preco_final = ""
 
 
-        if descricao and categoria and tamanho and preco_venda:
+        if descricao and categoria and tamanho: #preco_venda
         
             produto.descricao = descricao
             produto.categoria = categoria
@@ -716,7 +712,7 @@ def editar_produtos_pagvenda(id):
             else:
                 produto.preco_custo = float(preco_custo.replace('R$', '').replace(',', '.'))
 
-            produto.preco_venda = float(preco_venda.replace('R$', '').replace(',', '.'))
+            #produto.preco_venda = float(preco_venda.replace('R$', '').replace(',', '.'))
 
             if preco_final is not None:
                 produto.preco_final = float(preco_final.replace('R$', '').replace(',', '.'))

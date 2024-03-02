@@ -209,14 +209,14 @@
                                 <input type="text" name="preco_custo" value="{% if produtos.preco_custo is not none %}R${{ produtos.preco_custo }}{% endif %}" class="input-field modal formatar-reais">
                                 <label for="preco_custo" class="input-label">Preço de custo</label>
                             </div>
-                            <!--Preço de venda-->
+                            <!--Preço final-->
                             <div class="input-container">
-                                <input type="text" name="preco_venda" value="R${{ produtos.preco_venda }}" class="input-field modal formatar-reais" required>
-                                <label for="preco_venda" class="input-label">Preço de venda</label>
+                                <input type="text" name="preco_final" value="R${{ produtos.preco_final }}" class="input-field modal formatar-reais" required>
+                                <label for="preco_final" class="input-label">Preço de venda</label>
                                 <span class="required-asterisk">*</span>
                             </div>
                             <!-- Preço final -->
-                            <input type="text" style="display: none;" name="preco_final" value="{% if produtos.preco_final is not none %}{{ produtos.preco_final }}{% else %}{{ produtos.preco_venda }}{% endif %}" class="input-field modal formatar-reais">
+                            <input type="text"  name="preco_final" value="{% if produtos.preco_final is not none %}{{ produtos.preco_final }}{% else %}{{ produtos.preco_venda }}{% endif %}" class="input-field modal formatar-reais">
                             <!--Foto-->
                             <div class="input-container">
                                 <input type="file" name="foto" value="{{ produtos.foto }}" class="input-field modal" accept="image/*">
